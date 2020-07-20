@@ -5,7 +5,9 @@ from RDD import *
 import measures
 from measures import *
 
+
 g1, g2 = nx.Graph(), nx.Graph()
+
 
 g1.add_edges_from([
     (1, 2),
@@ -15,6 +17,7 @@ g1.add_edges_from([
     (3, 6),
     (4, 5),
 ])
+
 
 g2.add_edges_from([
     (1,2),

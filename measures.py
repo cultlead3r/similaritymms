@@ -10,7 +10,7 @@ import networkx as nx
 from RDD import *
 
 
-def triangles(network, node_list):
+def triangles(network):
     measures = list(nx.triangles(network).values())
     return measures
     
@@ -38,19 +38,11 @@ def realworld_distance_compare_no_measure_finding(network, u, v, measure, radius
     node_list1 = populate_node_list(real_paths1)
     node_list2 = populate_node_list(real_paths2)
 
-    measures_u = measure(network, node_list1)
+    measures_u = measure(network)
     if network2:
-        measures_v = measure(network2, node_list2, network2)
+        measures_v = measure(network2)
     else:
-        measures_v = measure(network, node_list2)
-
-
-    # # get the list of degrees from the main graph for each node in our sub_graph / list of nodes
-    # # measures1 = global_degree_measure(network, node_list1)
-    # # measures2 = global_degree_measure(network, node_list2)
-    # measures1 = list(nx.triangles(g1).values())
-    # measures2 = list(nx.triangles(g2).values())
-
+        measures_v = measure(network)
 
     # take the list of degrees and set the appropriate field in all the Node objects in the list
     add_measures_to_node(node_list1, measures_u)
