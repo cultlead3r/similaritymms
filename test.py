@@ -30,8 +30,10 @@ g2.add_edges_from([
 ])
 
 
-print(realworld_distance_compare_no_measure_finding(g1,
-                                                    1,
-                                                    1,
-                                                    measures.triangles,
-                                                    4))
+# for i in range(1,7):
+#    for j in range(1,7):
+#         print(f'Radial distribution distance: {i} and {j}: ', realworld_distance_compare_no_measure_finding(g1, i, j, measures.triangles, 4),
+#                     realworld_distance_compare_no_measure_finding(g1, i, j, measures.local_degree_measure, 4), 
+#                     realworld_distance_compare_no_measure_finding(g1, i, j, measures.global_degree_measure, 4))
+
+print(realworld_distance_compare_no_measure_finding(g1, 1, 5, measures.local_clique, 4))

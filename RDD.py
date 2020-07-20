@@ -131,24 +131,6 @@ def realworld_distance_compare(network, first, second, radius, network2=None):
 
     return get_rdd(cRD1,cRD2)
 
-    
-def global_degree_measure(network, node_list):
-    """Creates a list of degree of all nodes from main/global graph
-
-    Args:
-    -----
-        network: main/global graph
-        node_list: list of nodes in our local graph / subgraph of set radius
-
-    Returns:
-    --------
-        a list of global degrees for each node in local graph / node list"""
-    measures = []
-    for node in node_list:
-        measures.append(network.degree[node.name])
-    
-    return measures
-
 
 def add_measures_to_node(list_nodes, measures):
     """Populates the measure field for each Node in a list of Node objects
