@@ -9,6 +9,7 @@ from collections import defaultdict
 from Node import Node
 import networkx as nx
 import math
+import matplotlib.pyplot as plt
 
 
 def populate_node_list(shortest_paths):
@@ -112,11 +113,11 @@ def realworld_distance_compare(network, first, second, radius, network2=None):
     node_list2 = populate_node_list(real_paths2)
 
     # get the list of degrees from the main graph for each node in our sub_graph / list of nodes
-    measures1 = global_degree_measure(network, node_list1)
+    measures1 = global_degree(network, node_list1)
     if network2:
-        measures2 = global_degree_measure(network2, node_list2)
+        measures2 = global_degree(network2, node_list2)
     else:
-        measures2 = global_degree_measure(network, node_list2)
+        measures2 = global_degree(network, node_list2)
 
     # take the list of degrees and set the appropriate field in all the Node objects in the list
     add_measures_to_node(node_list1, measures1)
@@ -170,5 +171,9 @@ def paths_to_graph(given_paths):
     adj_list = list(dict.fromkeys(adj_list))
     g = nx.Graph()
     g.add_edges_from(adj_list)
-    
+
+    return g
+
+def nodes_to_graph(network, node_list):
+    g = network.subgraph(node_list)
     return g

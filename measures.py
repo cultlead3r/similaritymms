@@ -11,7 +11,7 @@ from RDD import *
 from scipy.linalg import norm
 
 
-def global_degree(network, node_list):
+def global_graph_degree(network, node_list):
     """Creates a list of degree of all nodes from main/global graph
 
     Args:
@@ -29,12 +29,21 @@ def global_degree(network, node_list):
     return measures
 
 
-def normalize(vector):
-    """Take an array and return the Euclidian norm"""
-    return norm(vector)
+def local_graph_degree(network, node_list):
+    measures = []
+    list_of_nodes = []
+    for node in node_list:
+        list_of_nodes.append(node.name)
+
+    local_graph = nodes_to_graph(network, list_of_nodes)
+
+    for node in node_list:
+        measures.append(local_graph.degree[node.name])
+    
+    return measures
 
 
-def local_degree(network, node_list):
+def local_path_degree(network, node_list):
     measures = []
     largestRad = -1
     targetNode = -1
@@ -52,17 +61,49 @@ def local_degree(network, node_list):
         #if local_graph.degree[node.name] > 1:
             #print(f'Name : {node.name} Degree: {local_graph.degree[node.name]}')
         measures.append(local_graph.degree[node.name])
-    print(measures)
+    
     return measures
 
 
 def triangles(network, node_list):
     measures = list(nx.triangles(network).values())
-    print(measures)
+    return measures
+
+def global_graph_clique(network, node_list):
+    """Creates a list containing the number of cliques each node is apart of.
+
+    Args:
+    -----
+        network: main/global graph
+        node_list: list of nodes in our local graph / subgraph of set radius
+
+    Returns:
+    --------
+        a list of global cliques for each node in node list"""
+    measures = []
+    for node in node_list:
+        cliques = nx.algorithms.clique.cliques_containing_node(network, node.name)
+        measures.append(len(cliques))
+    
     return measures
 
 
-def local_clique(network, node_list):
+def local_graph_clique(network, node_list):
+    measures = []
+    list_of_nodes = []
+    for node in node_list:
+        list_of_nodes.append(node.name)
+
+    local_graph = nodes_to_graph(network, list_of_nodes)
+
+    for node in node_list:
+        cliques = nx.algorithms.clique.cliques_containing_node(local_graph, node.name)
+        measures.append(len(cliques))
+    
+    return measures
+
+
+def local_path_clique(network, node_list):
     measures = []
     largestRad = -1
     targetNode = -1
@@ -80,12 +121,28 @@ def local_clique(network, node_list):
         #if localGraph.degree[node.name] > 1:
             #print(f'Name : {node.name} Degree: {localGraph.degree[node.name]}')
         cliques = nx.algorithms.clique.cliques_containing_node(network, node.name)
-        print(cliques)
         measures.append(len(cliques))
     
-    print(measures)
     return measures
 
+def global_graph_basis_cycles(network, node_list):
+    """Creates a list containing the number of base cycles each node is apart of.
+
+    Args:
+    -----
+        network: main/global graph
+        node_list: list of nodes in our local graph / subgraph of set radius
+
+    Returns:
+    --------
+        a list of global cycles for each node in node list"""
+    measures = []
+    for node in node_list:
+        cycles = nx.find_cycle(network, node.name)
+        print(cycles)
+        measures.append(len(cycles))
+    
+    return measures
 
 def realworld_distance_compare_no_measure_finding(network, u, v, measure, radius, network2=None):
     """Compares the radial distribution distance between two nodes in a single or two graphs.
@@ -119,6 +176,13 @@ def realworld_distance_compare_no_measure_finding(network, u, v, measure, radius
     # take the list of degrees and set the appropriate field in all the Node objects in the list
     add_measures_to_node(node_list1, measures_u)
     add_measures_to_node(node_list2, measures_v)
+    
+    for node in node_list1:
+        print(f'{node.name}, {node.measure}')
+    
+    for node in node_list2:
+        print(f'{node.name}, {node.measure}')
+    
 
     # gets the cumulative radial distributions for every radius up to threshhold
     cRD1 = get_CRD(node_list1)

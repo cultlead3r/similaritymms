@@ -36,4 +36,4 @@ g2.add_edges_from([
 #                     realworld_distance_compare_no_measure_finding(g1, i, j, measures.local_degree_measure, 4), 
 #                     realworld_distance_compare_no_measure_finding(g1, i, j, measures.global_degree_measure, 4))
 
-print(realworld_distance_compare_no_measure_finding(g1, 1, 5, measures.local_clique, 4))
+print(realworld_distance_compare_no_measure_finding(g1, 1, 5, measures.global_graph_basis_cycles, 4))
