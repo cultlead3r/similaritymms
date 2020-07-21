@@ -8,6 +8,8 @@ They need to return lists of numbers representing values for each node.
 
 import networkx as nx
 from RDD import *
+from scipy.linalg import norm
+
 
 def global_degree(network, node_list):
     """Creates a list of degree of all nodes from main/global graph
@@ -27,6 +29,11 @@ def global_degree(network, node_list):
     return measures
 
 
+def normalize(vector):
+    """Take an array and return the Euclidian norm"""
+    return norm(vector)
+
+
 def local_degree(network, node_list):
     measures = []
     largestRad = -1
@@ -39,19 +46,21 @@ def local_degree(network, node_list):
         if node.radius == 0:
             targetNode = node.name
     
-    localGraph = paths_to_graph(nx.single_source_shortest_path(network, targetNode, largestRad))
+    local_graph = paths_to_graph(nx.single_source_shortest_path(network, targetNode, largestRad))
     
     for node in node_list:
-        #if localGraph.degree[node.name] > 1:
-            #print(f'Name : {node.name} Degree: {localGraph.degree[node.name]}')
-        measures.append(localGraph.degree[node.name])
-    
+        #if local_graph.degree[node.name] > 1:
+            #print(f'Name : {node.name} Degree: {local_graph.degree[node.name]}')
+        measures.append(local_graph.degree[node.name])
+    print(measures)
     return measures
 
 
 def triangles(network, node_list):
     measures = list(nx.triangles(network).values())
+    print(measures)
     return measures
+
 
 def local_clique(network, node_list):
     measures = []
@@ -76,6 +85,7 @@ def local_clique(network, node_list):
     
     print(measures)
     return measures
+
 
 def realworld_distance_compare_no_measure_finding(network, u, v, measure, radius, network2=None):
     """Compares the radial distribution distance between two nodes in a single or two graphs.
