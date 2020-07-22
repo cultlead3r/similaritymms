@@ -73,6 +73,24 @@ def get_CRD_union(crd1, crd2):
     union = set(crd1.keys()).union(set(crd2.keys()))
     return list(union)
 
+def rdd_log_scale(rDD, r, crd1,crd2):
+    """Creates a sumation log scale for our rdd"""
+    sum = 0
+    for i in range(r):
+        i=i+1
+        sum = sum + 1/i
+    rDD = rDD + math.log(math.exp(-r))*abs(crd1[r] - crd2[r])
+
+    return rDD
+
+def rdd_default_scale(rDD, r, crd1,crd2):
+    """Creates a sumation log scale for our rdd"""
+
+    rDD = rDD + math.exp(-r)*abs(crd1[r] - crd2[r])
+
+    return rDD
+
+
 
 def get_rdd(crd1, crd2):
     """Get the radial distribution distance for two CRDs
@@ -80,10 +98,14 @@ def get_rdd(crd1, crd2):
     Takes two cumulative radial distribution dictionaries as arguments.
     Returns a radial distribution distance float
     """
+
     CRD = get_CRD_union(crd1, crd2)
     rDD = 0
     for r in CRD:
-        rDD = rDD + math.exp(-r)*abs(crd1[r] - crd2[r])
+        #r goes from 0 to 3 when radius 4 to indicate a open circle(nodes on edge of circle are not encluded).
+        #This might be a problem if the paper calls for a closed circle(i.e. r should go from 1or0 to 4).
+        #!!!!CHECK LATER!!!!!
+        rDD = rdd_default_scale(rDD, r, crd1, crd2)
     return rDD
 
 
@@ -175,5 +197,17 @@ def paths_to_graph(given_paths):
     return g
 
 def nodes_to_graph(network, node_list):
+    """Takes the global network and a list of nodes then returns a subgraph with the specified nodes.
+
+    Args:
+    -----
+        network: global graph, nx graph
+        node_list: A list of nodes for the subgraph
+    
+    Returns:
+    --------
+        g: The subgraph, nx.Graph() object.
+    
+    """
     g = network.subgraph(node_list)
     return g

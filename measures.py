@@ -125,24 +125,24 @@ def local_path_clique(network, node_list):
     
     return measures
 
-def global_graph_basis_cycles(network, node_list):
-    """Creates a list containing the number of base cycles each node is apart of.
+# def global_graph_basis_cycles(network, node_list):
+#     """Creates a list containing the number of base cycles each node is apart of.
 
-    Args:
-    -----
-        network: main/global graph
-        node_list: list of nodes in our local graph / subgraph of set radius
+#     Args:
+#     -----
+#         network: main/global graph
+#         node_list: list of nodes in our local graph / subgraph of set radius
 
-    Returns:
-    --------
-        a list of global cycles for each node in node list"""
-    measures = []
-    for node in node_list:
-        cycles = nx.find_cycle(network, node.name)
-        print(cycles)
-        measures.append(len(cycles))
+#     Returns:
+#     --------
+#         a list of global cycles for each node in node list"""
+#     measures = []
+#     for node in node_list:
+#         Note Working RN
+#         cycles = nx.find_cycle(network, node.name)
+#         measures.append(len(cycles))
     
-    return measures
+#     return measures
 
 def realworld_distance_compare_no_measure_finding(network, u, v, measure, radius, network2=None):
     """Compares the radial distribution distance between two nodes in a single or two graphs.
@@ -177,11 +177,11 @@ def realworld_distance_compare_no_measure_finding(network, u, v, measure, radius
     add_measures_to_node(node_list1, measures_u)
     add_measures_to_node(node_list2, measures_v)
     
-    for node in node_list1:
-        print(f'{node.name}, {node.measure}')
+    # for node in node_list1:
+    #     print(f'{node.name}, {node.measure}')
     
-    for node in node_list2:
-        print(f'{node.name}, {node.measure}')
+    # for node in node_list2:
+    #     print(f'{node.name}, {node.measure}')
     
 
     # gets the cumulative radial distributions for every radius up to threshhold

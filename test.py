@@ -30,10 +30,10 @@ g2.add_edges_from([
 ])
 
 
-# for i in range(1,7):
-#    for j in range(1,7):
-#         print(f'Radial distribution distance: {i} and {j}: ', realworld_distance_compare_no_measure_finding(g1, i, j, measures.triangles, 4),
-#                     realworld_distance_compare_no_measure_finding(g1, i, j, measures.local_degree_measure, 4), 
-#                     realworld_distance_compare_no_measure_finding(g1, i, j, measures.global_degree_measure, 4))
+for i in range(1,7):
+   for j in range(1,7):
+        print(f'Radial distribution distance: {i} and {j}: ', realworld_distance_compare_no_measure_finding(g1, i, j, measures.global_graph_degree, 2),
+                    realworld_distance_compare_no_measure_finding(g1, i, j, measures.local_graph_degree, 2), 
+                    realworld_distance_compare_no_measure_finding(g1, i, j, measures.local_path_degree, 2))
 
-print(realworld_distance_compare_no_measure_finding(g1, 1, 5, measures.global_graph_basis_cycles, 4))
+# print(realworld_distance_compare_no_measure_finding(g1, 1, 4, measures.local_path_clique, 4))
