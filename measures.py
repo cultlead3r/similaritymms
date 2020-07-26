@@ -9,6 +9,7 @@ They need to return lists of numbers representing values for each node.
 import networkx as nx
 from RDD import *
 from scipy.linalg import norm
+import pandas as pd
 
 
 def global_graph_degree(network, node_list):
@@ -192,3 +193,51 @@ def realworld_distance_compare_no_measure_finding(network, u, v, measure, radius
     ensure_radial_parity(cRD1, cRD2)
 
     return get_rdd(cRD1,cRD2)
+
+
+def get_rdds_for_visuals(network, u, measure, radius, network2=None):
+    if network2:
+        ##will be confusing. The U is our target node so when there is a second netwrok,
+        #we use the same target for both graphs when calculation radius.
+        shortest_paths = nx.single_source_shortest_path(network2, u, radius)
+    else:
+        shortest_paths = nx.single_source_shortest_path(network, u, radius)
+
+    rddList = []
+    nodeList = []
+    radList = []
+
+    if network2:
+        for node in network2:
+            rddList.append(realworld_distance_compare_no_measure_finding(network, u, node, measure, radius, network2))
+            radList.append(len(shortest_paths[node]) - 1)
+            nodeList.append(node)
+    else:
+        for node in network:
+            rddList.append(realworld_distance_compare_no_measure_finding(network, u, node, measure, radius))
+            radList.append(len(shortest_paths[node]) - 1)
+            nodeList.append(node)
+
+    d = {'node_name':nodeList, 'rdd':rddList, 'radius':radList}
+    df = pd.DataFrame(d)
+
+    return df     
+
+   
+def get_rdds_for_visuals_diff_graph(network, u, measure, radius, network2):
+    shortest_paths = nx.single_source_shortest_path(network, u, radius)
+    rddList = []
+    nodeList = []
+    radList = []
+    # used for single graph. Add multigraph later.
+    for node in network:
+        rddList.append(realworld_distance_compare_no_measure_finding(network, u, node, measure, radius))
+        radList.append(len(shortest_paths[node]) - 1)
+        nodeList.append(node)
+
+    d = {'node_name':nodeList, 'rdd':rddList, 'radius':radList}
+    df = pd.DataFrame(d)
+
+    return df     
+
+  

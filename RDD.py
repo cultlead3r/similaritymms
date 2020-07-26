@@ -85,7 +85,6 @@ def rdd_log_scale(rDD, r, crd1,crd2):
 
 def rdd_default_scale(rDD, r, crd1,crd2):
     """Creates a sumation log scale for our rdd"""
-
     rDD = rDD + math.exp(-r)*abs(crd1[r] - crd2[r])
 
     return rDD
@@ -106,53 +105,54 @@ def get_rdd(crd1, crd2):
         #This might be a problem if the paper calls for a closed circle(i.e. r should go from 1or0 to 4).
         #!!!!CHECK LATER!!!!!
         rDD = rdd_default_scale(rDD, r, crd1, crd2)
+        #rDD = rDD + math.exp(-r)*abs(crd1[r] - crd2[r])
     return rDD
 
 
-def realworld_distance_compare(network, first, second, radius, network2=None):
-    """Compares the radial distribution distance between two nodes in a single or two graphs.
+# def realworld_distance_compare(network, first, second, radius, network2=None):
+#     """Compares the radial distribution distance between two nodes in a single or two graphs.
 
-    Args:
-    -----
-        network: a networkx Graph object
-        first: an instance of our Node class #  gets converted to string to match nx.Graph
-        second: an instance of our Node class #  gets converted to string to match nx.Graph
-        radius: the maximum radius we want to compare with
+#     Args:
+#     -----
+#         network: a networkx Graph object
+#         first: an instance of our Node class #  gets converted to string to match nx.Graph
+#         second: an instance of our Node class #  gets converted to string to match nx.Graph
+#         radius: the maximum radius we want to compare with
 
-    Returns:
-    -------
-        A float representing the radial distribution distance difference.
-    """
-    # Get the shortest paths for each node up to the specified radius
-    real_paths1 = nx.single_source_shortest_path(network, first, radius)
-    if network2:
-        real_paths2 = nx.single_source_shortest_path(network2, second, radius)
-    else:
-        real_paths2 = nx.single_source_shortest_path(network, second, radius)
+#     Returns:
+#     -------
+#         A float representing the radial distribution distance difference.
+#     """
+#     # Get the shortest paths for each node up to the specified radius
+#     real_paths1 = nx.single_source_shortest_path(network, first, radius)
+#     if network2:
+#         real_paths2 = nx.single_source_shortest_path(network2, second, radius)
+#     else:
+#         real_paths2 = nx.single_source_shortest_path(network, second, radius)
     
-    # Create a list of Node objects from our shortest paths lists
-    node_list1 = populate_node_list(real_paths1)
-    node_list2 = populate_node_list(real_paths2)
+#     # Create a list of Node objects from our shortest paths lists
+#     node_list1 = populate_node_list(real_paths1)
+#     node_list2 = populate_node_list(real_paths2)
 
-    # get the list of degrees from the main graph for each node in our sub_graph / list of nodes
-    measures1 = global_degree(network, node_list1)
-    if network2:
-        measures2 = global_degree(network2, node_list2)
-    else:
-        measures2 = global_degree(network, node_list2)
+#     # get the list of degrees from the main graph for each node in our sub_graph / list of nodes
+#     measures1 = measures.global_graph_degree(network, node_list1)
+#     if network2:
+#         measures2 = measures.global_graph_degree(network2, node_list2)
+#     else:
+#         measures2 = measures.global_graph_degree(network, node_list2)
 
-    # take the list of degrees and set the appropriate field in all the Node objects in the list
-    add_measures_to_node(node_list1, measures1)
-    add_measures_to_node(node_list2, measures2)
+#     # take the list of degrees and set the appropriate field in all the Node objects in the list
+#     add_measures_to_node(node_list1, measures1)
+#     add_measures_to_node(node_list2, measures2)
 
-    # gets the cumulative radial distributions for every radius up to threshhold
-    cRD1 = get_CRD(node_list1)
-    cRD2 = get_CRD(node_list2)
+#     # gets the cumulative radial distributions for every radius up to threshhold
+#     cRD1 = get_CRD(node_list1)
+#     cRD2 = get_CRD(node_list2)
     
-    # each radial distribution must go up to the same threshhold
-    ensure_radial_parity(cRD1, cRD2)
+#     # each radial distribution must go up to the same threshhold
+#     ensure_radial_parity(cRD1, cRD2)
 
-    return get_rdd(cRD1,cRD2)
+#     return get_rdd(cRD1,cRD2)
 
 
 def add_measures_to_node(list_nodes, measures):
