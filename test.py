@@ -4,7 +4,7 @@ from Node import Node
 from RDD import *
 import measures
 from measures import *
-
+from visualize import visualize_rdd
 
 g1, g2 = nx.Graph(), nx.Graph()
 
@@ -37,3 +37,4 @@ g2.add_edges_from([
 #                     realworld_distance_compare_no_measure_finding(g1, i, j, measures.local_graph_degree, 2), 
 #                     realworld_distance_compare_no_measure_finding(g1, i, j, measures.local_path_degree, 2))
 print(get_rdds_for_visuals(g1, 1, measures.local_path_degree, 4, g2))
+visualize_rdd(g1).show()
