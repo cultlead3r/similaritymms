@@ -23,39 +23,23 @@ g1.add_edges_from([
     (4, 5),
 ])
 
-# nw = visualize.visualize_rdd(want_network)
-
-tips=px.data.tips()
-
-px.defaults.template = "plotly_dark"
-
-
 app = dash.Dash(__name__)
 
 app.layout = html.Div([
-    dcc.Graph(id='graph', config={
-        'scrollZoom': True
-    }),
+       
+    html.H3("What measure do you want to use?"),
 
-    html.H3("What should determine graph color?"),
-    dcc.Dropdown(id='plot_against',
-        options=[{'label': x, 'value': x} for x in tips.columns]),
+    dcc.Dropdown(id='measure_choice', placeholder="Choose measure", options=[
+        {'label': 'triangles node is part of', 'value': 'triangles'},
+        {'label': 'global degree', 'value': 'global_graph_degree'},
+        {'label': 'local degree', 'value': 'local_graph_degree'},
+        {'label': 'global clique', 'value': 'global_graph_clique'},
+        {'label': 'local clique', 'value': 'local_graph_clique'},
+        
+    ]),
 
-    html.H3("Choose a marginal graph"),
-    dcc.Dropdown(id='dropdown', options=[
-        {'label': 'boxplot', 'value': 'box'},
-        {'label': 'violin chart', 'value' : 'violin'}]),
-
-    html.H3("Do you want a violin plot on the right?"),  
-    dcc.Checklist(id='want_violin', options=[
-        {'label': 'violin', 'value': 'box'}]),
-    
-    html.H3("Do you want to plot a network?"),  
-    dcc.Checklist(id='want_network', options=[
-        {'label': 'network', 'value': 'want_network'}]),
-
-    dcc.Dropdown(id='network_choice', options=[
-        {'label': 'the sample graph', 'value': 'the_g1'}
+    dcc.Dropdown(id='network_choice', placeholder="Choose network", options=[
+    {'label': 'the sample graph', 'value': 'the_g1'}
     ]),
 
     dcc.Graph(id='network'),
@@ -63,35 +47,31 @@ app.layout = html.Div([
 ])
 
 
-
-@app.callback(
-    Output('graph', 'figure'),
-    [Input('dropdown', 'value'),
-    Input('want_violin', 'value'),
-    Input('plot_against', 'value')])
-def update_figure(dropdown_selection, the_violin, plot_against):
-    the_violin = 'violin' if the_violin else None
-    fig = px.scatter(tips, x='total_bill', y='tip',
-                 marginal_x=dropdown_selection,
-                 marginal_y=the_violin,
-                 color=plot_against,
-                 size='tip',
-                 trendline='ols')
-    fig.update_layout(dragmode='pan')
-    return fig
-
-
 @app.callback(
     Output('network', 'figure'),
-    [Input('want_network', 'value'),
-     Input('network_choice', 'value')])
-def update_network(want_network, network_choice):
+    [
+     Input('network_choice', 'value'),
+     Input('measure_choice', 'value'),
+    ])
+def update_network(network_choice, measure_choice):
+    network = None
+    measure = None
     choice = None
-    print(network_choice)
+    if measure_choice == 'triangles':
+        measure=measures.triangles
+    elif measure_choice == 'global_graph_degree':
+        measure=measures.global_graph_degree
+    elif measure_choice == 'local_graph_degree':
+        measure=measures.local_graph_degree
+    elif measure_choice == 'global_graph_clique':
+        measure=measures.global_graph_clique
+    elif measure_choice == 'local_graph_clique':
+        measure=measures.local_graph_clique
+
     if network_choice == 'the_g1':
         choice = g1
-    if want_network and choice:
-        fig = visualize.visualize_rdd(choice)
+    if choice and measure:
+        fig = visualize.visualize_rdd(choice, measure)
         return fig
     else:
         fig = go.Figure()
