@@ -5,10 +5,10 @@ from Node import Node
 import measures
 
 
-def visualize_rdd(g1):
+def visualize_rdd(g1, m=measures.global_graph_degree):
     """takes a graph and plots it, coloring vertices by RDD"""
 
-    df = measures.get_rdds_for_visuals(g1, 1, measures.global_graph_degree, 4)
+    df = measures.get_rdds_for_visuals(g1, 1, m, 4)
     pos = spring_layout(g1)
     nodes_x = []
     nodes_y = []
@@ -41,15 +41,15 @@ def visualize_rdd(g1):
     # fig.update_traces(marker={'size': 20})
     # fig.add_trace(go.Scatter(x=edges_x, y=edges_y, mode='lines', line={'width': 3}))
 
-    fig2 = go.Figure()
-    fig2.add_trace(go.Scatter(x=edges_x, y=edges_y, name='edges', mode='lines', line={'width': 3}))
-    fig2.add_trace(go.Scatter(x=df['nodes_x'],
+    fig = go.Figure()
+    fig.add_trace(go.Scatter(x=edges_x, y=edges_y, name='edges', mode='lines', line={'width': 3}))
+    fig.add_trace(go.Scatter(x=df['nodes_x'],
                               y=df['nodes_y'],
                               customdata=df['rdd'],
                               hovertemplate="RDD: %{customdata}",
                               text=df['node_name'],
                               name="nodes",
                               mode='markers+text'))
-    fig2.update_layout(template="plotly_dark")
-    fig2.update_traces(marker={'size': 20, 'color':df['rdd']})
-    return fig2
+    fig.update_layout(template="plotly_dark")
+    fig.update_traces(marker={'size': 20, 'color':df['rdd']})
+    return fig
