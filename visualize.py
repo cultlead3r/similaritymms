@@ -42,14 +42,16 @@ def visualize_rdd(g1, m=measures.global_graph_degree):
     # fig.add_trace(go.Scatter(x=edges_x, y=edges_y, mode='lines', line={'width': 3}))
 
     fig = go.Figure()
-    fig.add_trace(go.Scatter(x=edges_x, y=edges_y, name='edges', mode='lines', line={'width': 3}))
+    fig.add_trace(go.Scatter(x=edges_x, y=edges_y, name='edges', mode='lines', line={'width': 1}))
     fig.add_trace(go.Scatter(x=df['nodes_x'],
                               y=df['nodes_y'],
-                              customdata=df['rdd'],
-                              hovertemplate="Node: %{text} <br> RDD: %{customdata}<extra></extra>",
+                              customdata=df[['rdd', 'degree']].values,
+                              hovertemplate="Node: %{text} <br> RDD: %{customdata[0]} <br> Degree: %{customdata[1]} <extra></extra>",
                               text=df['node_name'],
                               name="nodes",
                               mode='markers+text'))
-    fig.update_layout(template="plotly_dark")
-    fig.update_traces(marker={'size': 20, 'color':df['rdd']})
-    return fig
+    fig.update_layout(template="plotly_dark", dragmode='pan')
+    fig.update_traces(marker={'size': df['rdd'] * 2, 'color': df['rdd'], 'colorscale' : 'Jet'})
+    fig.write_html("graph.html", config={'scrollZoom':True})
+
+    return fig.show(config={'scrollZoom':True})

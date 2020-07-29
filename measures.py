@@ -70,6 +70,7 @@ def triangles(network, node_list):
     measures = list(nx.triangles(network).values())
     return measures
 
+
 def global_graph_clique(network, node_list):
     """Creates a list containing the number of cliques each node is apart of.
 
@@ -206,6 +207,7 @@ def get_rdds_for_visuals(network, u, measure, radius, network2=None):
     rddList = []
     nodeList = []
     radList = []
+    degree_list = []
 
     if network2:
         for node in network2:
@@ -214,11 +216,18 @@ def get_rdds_for_visuals(network, u, measure, radius, network2=None):
             nodeList.append(node)
     else:
         for node in network:
-            rddList.append(realworld_distance_compare_no_measure_finding(network, u, node, measure, radius))
-            radList.append(len(shortest_paths[node]) - 1)
+            r = realworld_distance_compare_no_measure_finding(network, u, node, measure, radius)
+            if r == 0:
+                rddList.append(0)
+            else:
+                rddList.append(math.log(r, 1.5))
+            # radList.append(len(shortest_paths[node]) - 1)
+            #TODO Fix this
+            radList.append(1)
             nodeList.append(node)
+            degree_list.append(network.degree(node))
 
-    d = {'node_name':nodeList, 'rdd':rddList, 'radius':radList}
+    d = {'node_name':nodeList, 'rdd':rddList, 'radius':radList, 'degree': degree_list}
     df = pd.DataFrame(d)
 
     return df     
