@@ -5,10 +5,20 @@ from Node import Node
 import measures
 
 
-def visualize_rdd(g1, m=measures.global_graph_degree):
-    """takes a graph and plots it, coloring vertices by RDD"""
+def visualize_rdd(g1, u, m=measures.global_graph_degree):
+    """takes a graph and plots it, coloring vertices by RDD
 
-    df = measures.get_rdds_for_visuals(g1, 1, m, 4)
+    Args:
+    -----
+        g1: a networkx graph
+        u: source node
+        m: a measure function from measures
+
+    Returns:
+    --------
+        fig: a figure object of a scatter plot"""
+
+    df = measures.get_rdds_for_visuals(g1, u, m, 4)
     pos = spring_layout(g1)
     nodes_x = []
     nodes_y = []
@@ -51,7 +61,7 @@ def visualize_rdd(g1, m=measures.global_graph_degree):
                               name="nodes",
                               mode='markers+text'))
     fig.update_layout(template="plotly_dark", dragmode='pan')
-    fig.update_traces(marker={'size': df['rdd'] * 2, 'color': df['rdd'], 'colorscale' : 'Jet'})
+    fig.update_traces(marker={'size': 10, 'color': df['rdd'], 'colorscale' : 'Jet'})
     fig.write_html("graph.html", config={'scrollZoom':True})
 
     return fig.show(config={'scrollZoom':True})
