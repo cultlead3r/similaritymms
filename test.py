@@ -66,7 +66,7 @@ for node in node_list1:
     list_of_nodes.append(node.name)
 subgraph = nodes_to_graph(real_network2, list_of_nodes)
 # subgraph.nodes
-fig = visualize_rdd(subgraph)
+fig = visualize_rdd(subgraph, 1)
 fig.show()
 # print("hi", subgraph)
 # real_paths2 = nx.single_source_shortest_path(subgraph, 1, 4)

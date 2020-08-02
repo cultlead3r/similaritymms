@@ -91,7 +91,7 @@ def rdd_log_scale(rdd, r, crd1, crd2):
     for i in range(1, r, 1):
         # i = i + 1
         sum_of_log = sum_of_log + 1/i
-    rdd = rdd + (math.log(math.exp(-r)) + math.log(sum_of_log)+4) * abs(crd1[r] - crd2[r])
+    rdd = rdd + (math.log(math.exp(-r)) + sum_of_log) * abs(crd1[r] - crd2[r])
 
     return rdd
 
@@ -102,6 +102,15 @@ def rdd_default_scale(rdd, r, crd1, crd2):
 
     return rdd
 
+def rdd_modified_scale(rdd, r, crd1, crd2):
+    """Create a sumation for updated scale"""
+    try:
+        print(crd1[r], crd2[r])
+        rdd = rdd + math.exp(-r+math.log(abs(crd1[r] - crd2[r]), math.exp(1)))
+    except Exception:
+        print(crd1[r], crd2[r])
+    
+    return rdd
 
 def get_rdd_ken2(rdd, r, crd1, crd2):
     sum_of_nodes = 1/348

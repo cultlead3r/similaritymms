@@ -8,7 +8,7 @@ They need to return lists of numbers representing values for each node.
 
 from RDD import *
 import pandas as pd
-
+import numpy as np
 
 def global_graph_degree(network, node_list):
     """Creates a list of degree of all nodes from main/global graph
@@ -266,7 +266,9 @@ def get_rdds_for_visuals(network, u, measure, radius):
         if r == 0:
             rdd_list.append(0)
         else:
-            rdd_list.append(math.log(r, 10))
+            #rdd_list.append(math.log(r, 10))
+            #rdd_list.append(np.tanh(r))
+            rdd_list.append(r)
 
         # TODO Fix this - rad_list is broken - adding 1 just to make it work
         # rad_list.append(len(shortest_paths[node]) - 1)
@@ -276,8 +278,20 @@ def get_rdds_for_visuals(network, u, measure, radius):
         degree_list.append(network.degree(node))
     d = {'node_name': node_list, 'rdd': rdd_list, 'radius': rad_list, 'degree': degree_list}
     df = pd.DataFrame(d)
+
+    df['rdd'] = normalize_rdd(df, 1, 1000)
+    df['rdd'] = np.log10(df['rdd'])
+    # df['rdd'] = np.tanh(df['rdd'])
+
     return df     
 
+def normalize_rdd(df, d_min, d_max):
+    r_min = df['rdd'].min()
+    r_max = df['rdd'].max()
+    t_min = d_min
+    t_max = d_max
+
+    return ((df['rdd'] - r_min)/(r_max - r_min))*(t_max-t_min)+t_min
 
 # TODO: Not working yet
 def get_rdds_for_visuals_diff_graph(network, u, measure, radius, network2):
