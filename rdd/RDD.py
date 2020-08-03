@@ -11,7 +11,6 @@ import networkx as nx
 import math
 
 
-
 def populate_node_list(shortest_paths):
     """Creates list of Node objects from list of shortest paths
 
@@ -56,7 +55,6 @@ def get_crd(list_of_nodes):
     Returns:
     --------
         m: a defaultdict radius->radial distribution
-
     """
     m = defaultdict(int)
     for n in list_of_nodes:
@@ -78,22 +76,11 @@ def ensure_radial_parity(crd1, crd2):
             crd1[len(crd1)+i] = crd1[len(crd1) - 1]
 
 
+# TODO Make this the union and get rid of the shit above
 def get_crd_union(crd1, crd2):
     """Takes two dictionaries and returns the union of their keys in a list"""
     union = set(crd1.keys()).union(set(crd2.keys()))
     return list(union)
-
-
-# TODO: fixme
-def rdd_log_scale(rdd, r, crd1, crd2):
-    """Creates a summation log scale for our rdd"""
-    sum_of_log = 1
-    for i in range(1, r, 1):
-        # i = i + 1
-        sum_of_log = sum_of_log + 1/i
-    rdd = rdd + (math.log(math.exp(-r)) + sum_of_log) * abs(crd1[r] - crd2[r])
-
-    return rdd
 
 
 def rdd_default_scale(rdd, r, crd1, crd2):
@@ -101,40 +88,6 @@ def rdd_default_scale(rdd, r, crd1, crd2):
     rdd = rdd + math.exp(-r) * abs(crd1[r] - crd2[r])
 
     return rdd
-
-def rdd_modified_scale(rdd, r, crd1, crd2):
-    """Create a sumation for updated scale"""
-    try:
-        print(crd1[r], crd2[r])
-        rdd = rdd + math.exp(-r+math.log(abs(crd1[r] - crd2[r]), math.exp(1)))
-    except Exception:
-        print(crd1[r], crd2[r])
-    
-    return rdd
-
-def get_rdd_ken2(rdd, r, crd1, crd2):
-    sum_of_nodes = 1/348
-    for i in range(1, r, 1):
-        sum_of_nodes += 1/348
-    # print(sum_of_nodes, 'before rdd= line')
-    # print(type(rdd), rdd)
-    rdd = rdd + (math.log(math.exp(-r)) + math.log(sum_of_nodes)) * abs(crd1[r] - crd2[r])
-    print(math.log(sum_of_nodes))
-
-
-def get_rdd_ken(rdd, r, crd1, crd2):
-    sum_e = 0
-    sum_of_nodes = 1/348
-    for i in range(1, r, 1):
-        sum_e += math.log(math.exp(-i))
-    for i in range(1, r, 1):
-        sum_of_nodes += 1/348
-    # print(sum_of_nodes, 'before rdd= line')
-    # print(type(rdd), rdd)
-    rdd = rdd + (sum_e + math.log(sum_of_nodes)) * abs(crd1[r] - crd2[r])
-    print(math.log(sum_of_nodes))
-    return rdd
-
 
 
 def get_rdd(crd1, crd2):
@@ -155,52 +108,6 @@ def get_rdd(crd1, crd2):
         r_dd = rdd_default_scale(r_dd, r, crd1, crd2)
         # r_dd = r_dd + math.exp(-r)*abs(crd1[r] - crd2[r])
     return r_dd
-
-
-# def realworld_distance_compare(network, first, second, radius, network2=None):
-#     """Compares the radial distribution distance between two nodes in a single or two graphs.
-
-#     Args:
-#     -----
-#         network: a networkx Graph object
-#         first: an instance of our Node class #  gets converted to string to match nx.Graph
-#         second: an instance of our Node class #  gets converted to string to match nx.Graph
-#         radius: the maximum radius we want to compare with
-
-#     Returns:
-#     -------
-#         A float representing the radial distribution distance difference.
-#     """
-#     # Get the shortest paths for each node up to the specified radius
-#     real_paths1 = nx.single_source_shortest_path(network, first, radius)
-#     if network2:
-#         real_paths2 = nx.single_source_shortest_path(network2, second, radius)
-#     else:
-#         real_paths2 = nx.single_source_shortest_path(network, second, radius)
-    
-#     # Create a list of Node objects from our shortest paths lists
-#     node_list1 = populate_node_list(real_paths1)
-#     node_list2 = populate_node_list(real_paths2)
-
-#     # get the list of degrees from the main graph for each node in our sub_graph / list of nodes
-#     measures1 = measures.global_graph_degree(network, node_list1)
-#     if network2:
-#         measures2 = measures.global_graph_degree(network2, node_list2)
-#     else:
-#         measures2 = measures.global_graph_degree(network, node_list2)
-
-#     # take the list of degrees and set the appropriate field in all the Node objects in the list
-#     add_measures_to_node(node_list1, measures1)
-#     add_measures_to_node(node_list2, measures2)
-
-#     # gets the cumulative radial distributions for every radius up to threshhold
-#     cRD1 = get_crd(node_list1)
-#     cRD2 = get_crd(node_list2)
-    
-#     # each radial distribution must go up to the same threshhold
-#     ensure_radial_parity(cRD1, cRD2)
-
-#     return get_rdd(cRD1,cRD2)
 
 
 def add_measures_to_node(list_nodes, measures):
