@@ -96,27 +96,23 @@ def visualize_rdd_vector(g1, u, r, measure_vector):
         # why do these need to be here?
         edges_y.append(None)
 
-    # fig = px.scatter(df, x='nodes_x', y='nodes_y', text='node_name', custom_data=['rdd'], color='rdd')
-    # fig.update_traces(hovertemplate='Node: %{text}, RDD: %{customdata[0]}')
-    # fig.update_layout(font_size=20)
-    # fig.update_traces(marker={'size': 20})
-    # fig.add_trace(go.Scatter(x=edges_x, y=edges_y, mode='lines', line={'width': 3}))
+    # get the custom_data and build the hover template from the DataFrame column names
+    custom_data = df.columns
+    hover_template = ""
+    for i, m in enumerate(custom_data):
+        hover_template += "".join(m + ":" + ' %{customdata[' + str(i) + ']} <br> ')
 
     fig = go.Figure()
     fig.add_trace(go.Scatter(x=edges_x, y=edges_y, name='edges', mode='lines', line={'width': 1}))
     fig.add_trace(go.Scatter(x=df['nodes_x'],
                               y=df['nodes_y'],
-                              customdata=df[['rdd',
-                                             'triangles',
-                                             # 'local_graph_degree',
-                                             'local_path_degree',
-                                             'degree']].values,
-                              hovertemplate="Node: %{text} <br> RDD: %{customdata[0]} <br> Triangles: %{customdata[1]} <br>  <br> LPD: %{customdata[2]} <br> DEGREE: %{customdata[3]}<extra></extra>",
+                              customdata=df[custom_data],
+                              hovertemplate=hover_template,
                               text=df['node_name'],
-                              name="nodes",
+                              name="Node",
                               mode='markers+text'))
     fig.update_layout(template="plotly_dark", dragmode='pan')
-    fig.update_traces(marker={'size': 10, 'color': df['rdd'], 'colorscale' : 'Jet'})
+    fig.update_traces(marker={'size': 10, 'color': df['normalized_rdd'], 'colorscale' : 'Jet'})
     fig.write_html("graph.html", config={'scrollZoom':True})
 
     return fig.show(config={'scrollZoom':True})

@@ -310,16 +310,15 @@ def get_rdds_for_visuals_vector(network, u, measure_vector, radius):
             rdd_list.append(r)
         # we use __name__ to get the string name of the function
         df[m.__name__] = rdd_list
-
-
         measure_lists.append(rdd_list)
 
+    for m in measure_vector:
+        df[m.__name__] = normalize_rdd(df, 1, 1000, m.__name__)
+        df[m.__name__] = np.log10(df[m.__name__])
     df_norm = df[list(map(lambda f: f.__name__, measure_vector))]
-    df['rdd'] = la.norm(df_norm, axis=1)
-    df['rdd'] = normalize_rdd(df, 1, 1000, 'rdd')
-    df['rdd'] = np.log10(df['rdd'])
-    # df['rdd'] = np.tanh(df['rdd'])
-
+    df['normalized_rdd'] = la.norm(df_norm, axis=1)
+    # df['normalized_rdd'] = normalize_rdd(df, 1, 1000, 'normalized_rdd')
+    # df['normalized_rdd'] = np.log10(df['normalized_rdd'])
     return df
 
 

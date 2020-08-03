@@ -84,7 +84,7 @@ def get_crd_union(crd1, crd2):
 
 
 def rdd_default_scale(rdd, r, crd1, crd2):
-    """Creates a sumation log scale for our rdd"""
+    """Creates a summation log scale for our rdd"""
     rdd = rdd + math.exp(-r) * abs(crd1[r] - crd2[r])
 
     return rdd
