@@ -5,20 +5,21 @@ from rdd.Node import Node
 from rdd import measures
 
 
-def visualize_rdd(g1, u, m=measures.global_graph_degree):
+def visualize_rdd(g1, u, v, m=measures.global_graph_degree):
     """takes a graph and plots it, coloring vertices by RDD
 
     Args:
     -----
         g1: a networkx graph
         u: source node
+        v: target radius
         m: a measure function from measures
 
     Returns:
     --------
         fig: a figure object of a scatter plot"""
 
-    df = measures.get_rdds_for_visuals(g1, u, m, 4)
+    df = measures.get_rdds_for_visuals(g1, u, m, v)
     pos = spring_layout(g1)
     nodes_x = []
     nodes_y = []
