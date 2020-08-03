@@ -9,7 +9,7 @@ They need to return lists of numbers representing values for each node.
 from rdd.RDD import *
 import pandas as pd
 import numpy as np
-
+import numpy.linalg as la
 
 def global_graph_degree(network, node_list):
     """Creates a list of degree of all nodes from main/global graph
@@ -280,11 +280,47 @@ def get_rdds_for_visuals(network, u, measure, radius):
     d = {'node_name': node_list, 'rdd': rdd_list, 'radius': rad_list, 'degree': degree_list}
     df = pd.DataFrame(d)
 
-    df['rdd'] = normalize_rdd(df, 1, 1000)
-    df['rdd'] = np.log10(df['rdd'])
+    # df['rdd'] = normalize_rdd(df, 1, 1000)
+    # df['rdd'] = np.log10(df['rdd'])
     # df['rdd'] = np.tanh(df['rdd'])
 
     return df     
+
+
+def get_rdds_for_visuals_vector(network, u, measure_vector, radius):
+
+    node_list = []
+    degree_list = []
+    rad_list = []
+
+    # Populate and construct a DataFrame with basic node information
+    for node in network:
+        node_list.append(node)
+        degree_list.append(network.degree(node))
+        # TODO: Broken
+        rad_list.append(1)
+    df = pd.DataFrame({'node_name': node_list, 'radius': rad_list, 'degree': degree_list})
+
+    # Now iterate through the measures and add them as columns to the frame
+    measure_lists = []
+    for m in measure_vector:
+        rdd_list = []
+        for node in network:
+            r = realworld_distance_compare(network, u, node, m, radius)
+            rdd_list.append(r)
+        # we use __name__ to get the string name of the function
+        df[m.__name__] = rdd_list
+
+
+        measure_lists.append(rdd_list)
+
+    df_norm = df[list(map(lambda f: f.__name__, measure_vector))]
+    df['rdd'] = la.norm(df_norm, axis=1)
+    df['rdd'] = normalize_rdd(df, 1, 1000)
+    df['rdd'] = np.log10(df['rdd'])
+    print(df)
+
+    return df
 
 
 def normalize_rdd(df, d_min, d_max):
