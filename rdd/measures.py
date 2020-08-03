@@ -6,7 +6,7 @@ They need to return lists of numbers representing values for each node.
 """
 
 
-from RDD import *
+from rdd.RDD import *
 import pandas as pd
 import numpy as np
 

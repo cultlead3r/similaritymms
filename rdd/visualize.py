@@ -1,8 +1,8 @@
 import pandas as pd
 import plotly.graph_objects as go
 from networkx import spring_layout
-from Node import Node
-import measures
+from rdd.Node import Node
+from rdd import measures
 
 
 def visualize_rdd(g1, u, m=measures.global_graph_degree):

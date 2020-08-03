@@ -6,7 +6,7 @@ Radial Distribution Distance (RDD) in networks.
 
 
 from collections import defaultdict
-from Node import Node
+from rdd.Node import Node
 import networkx as nx
 import math
 
