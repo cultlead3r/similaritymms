@@ -284,7 +284,7 @@ def get_rdds_for_visuals(network, u, measure, radius):
     # df['rdd'] = np.log10(df['rdd'])
     # df['rdd'] = np.tanh(df['rdd'])
 
-    return df     
+    return df
 
 
 def get_rdds_for_visuals_vector(network, u, measure_vector, radius):
@@ -316,20 +316,20 @@ def get_rdds_for_visuals_vector(network, u, measure_vector, radius):
 
     df_norm = df[list(map(lambda f: f.__name__, measure_vector))]
     df['rdd'] = la.norm(df_norm, axis=1)
-    df['rdd'] = normalize_rdd(df, 1, 1000)
+    df['rdd'] = normalize_rdd(df, 1, 1000, 'rdd')
     df['rdd'] = np.log10(df['rdd'])
-    print(df)
+    # df['rdd'] = np.tanh(df['rdd'])
 
     return df
 
 
-def normalize_rdd(df, d_min, d_max):
-    r_min = df['rdd'].min()
-    r_max = df['rdd'].max()
+def normalize_rdd(df, d_min, d_max, col):
+    r_min = df[col].min()
+    r_max = df[col].max()
     t_min = d_min
     t_max = d_max
 
-    return ((df['rdd'] - r_min)/(r_max - r_min))*(t_max-t_min)+t_min
+    return ((df[col] - r_min)/(r_max - r_min))*(t_max-t_min)+t_min
 
 
 # TODO: Not working yet
