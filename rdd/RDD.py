@@ -91,22 +91,11 @@ def rdd_default_scale(rdd, r, crd1, crd2):
 
 
 def get_rdd(crd1, crd2):
-    """Get the radial distribution distance for two CRDs
-    
-    Takes two cumulative radial distribution dictionaries as arguments.
-    Returns a radial distribution distance float
-    """
-
+    """Get the radial distribution distance for two CRDs"""
     crd = get_crd_union(crd1, crd2)
     r_dd = 0
     for r in crd:
-        # if r == 0:
-        #     continue
-        # r goes from 0 to 3 when radius 4 to indicate a open circle(nodes on edge of circle are not encluded).
-        # This might be a problem if the paper calls for a closed circle(i.e. r should go from 1or0 to 4).
-        # !!!!CHECK LATER!!!!!
         r_dd = rdd_default_scale(r_dd, r, crd1, crd2)
-        # r_dd = r_dd + math.exp(-r)*abs(crd1[r] - crd2[r])
     return r_dd
 
 
