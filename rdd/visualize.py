@@ -102,7 +102,7 @@ def visualize_rdd_vector(g1, u, r, measure_vector):
     for i, m in enumerate(custom_data):
         hover_template += "".join(m + ":" + ' %{customdata[' + str(i) + ']} <br> ')
 
-    fig = go.Figure()
+    fig = go.FigureWidget()
     fig.add_trace(go.Scatter(x=edges_x, y=edges_y, name='edges', mode='lines', line={'width': 1}))
     fig.add_trace(go.Scatter(x=df['nodes_x'],
                               y=df['nodes_y'],
@@ -111,11 +111,19 @@ def visualize_rdd_vector(g1, u, r, measure_vector):
                               text=df['node_name'],
                               name="Node",
                               mode='markers+text'))
-    fig.update_layout(template="plotly_dark", dragmode='pan')
+    fig.update_layout(template="plotly_dark", dragmode='pan',
+                      annotations=[{'x': df.iloc[4]['nodes_x'],
+                                    'y': df.iloc[4]['nodes_y'],
+                                    'axref': 'x',
+                                    'ayref': 'y',
+                                    'arrowsize': 4,
+                                    'arrowcolor': 'red',
+                                    'showarrow': True,
+                                    'arrowhead': 3}])
     fig.update_traces(marker={'size': 10, 'color': df['normalized_rdd'], 'colorscale' : 'Jet'})
     fig.write_html("graph.html", config={'scrollZoom':True})
 
-    return fig.show(config={'scrollZoom':True})
+    return fig
 
 
 def visualize_simrank(g1, u):
@@ -165,7 +173,7 @@ def visualize_simrank(g1, u):
     # fig.update_traces(marker={'size': 20})
     # fig.add_trace(go.Scatter(x=edges_x, y=edges_y, mode='lines', line={'width': 3}))
 
-    fig = go.Figure()
+    fig = go.FigureWidget()
     fig.add_trace(go.Scatter(x=edges_x, y=edges_y, name='edges', mode='lines', line={'width': 1}))
     fig.add_trace(go.Scatter(x=df['nodes_x'],
                               y=df['nodes_y'],
@@ -178,4 +186,5 @@ def visualize_simrank(g1, u):
     fig.update_traces(marker={'size': 10, 'color': df['simrank'], 'colorscale' : 'Jet'})
     fig.write_html("graph.html", config={'scrollZoom':True})
 
-    return fig.show(config={'scrollZoom':True})
+    # return fig.show(config={'scrollZoom':True})
+    return fig

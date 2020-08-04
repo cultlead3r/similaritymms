@@ -23,6 +23,6 @@ def simrank(G, u):
     df['simrank'] = normalize_rdd(df, 1, 1000, 'simrank')
     df['simrank'] = np.log10(df['simrank'])
     
-    print(df)
+    # print(df)
 
     return df

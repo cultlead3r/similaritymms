@@ -100,7 +100,23 @@ def triangles(network, node_list):
         measures: list of how many triangles each node is a part of
 
     """
-    measures = list(nx.triangles(network).values())
+    measures = []
+    largest_rad = -1
+    target_node = -1
+
+    for node in node_list:
+        # find largest radius
+        if node.radius >= largest_rad:
+            largest_rad = node.radius
+
+        if node.radius == 0:
+            target_node = node.name
+
+    local_graph = paths_to_graph(nx.single_source_shortest_path(network, target_node, largest_rad))
+
+    for node in node_list:
+        measures.append(local_graph.degree[node.name])
+
     return measures
 
 
