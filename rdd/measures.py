@@ -296,8 +296,8 @@ def get_rdds_for_visuals(network, u, measure, radius):
     d = {'node_name': node_list, 'rdd': rdd_list, 'radius': rad_list, 'degree': degree_list}
     df = pd.DataFrame(d)
 
-    # df['rdd'] = normalize_rdd(df, 1, 1000)
-    # df['rdd'] = np.log10(df['rdd'])
+    df['rdd'] = normalize_rdd(df, 1, 1000, 'rdd')
+    df['rdd'] = np.log10(df['rdd'])
     # df['rdd'] = np.tanh(df['rdd'])
 
     return df
@@ -333,8 +333,8 @@ def get_rdds_for_visuals_vector(network, u, measure_vector, radius):
         df[m.__name__] = np.log10(df[m.__name__])
     df_norm = df[list(map(lambda f: f.__name__, measure_vector))]
     df['normalized_rdd'] = la.norm(df_norm, axis=1)
-    # df['normalized_rdd'] = normalize_rdd(df, 1, 1000, 'normalized_rdd')
-    # df['normalized_rdd'] = np.log10(df['normalized_rdd'])
+    #df['normalized_rdd'] = normalize_rdd(df, 1, 1000, 'normalized_rdd')
+    #df['normalized_rdd'] = np.log10(df['normalized_rdd'])
     return df
 
 

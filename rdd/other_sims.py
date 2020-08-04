@@ -1,6 +1,7 @@
 import networkx as nx
 import pandas as pd
 import numpy as np
+from sklearn.cluster import KMeans
 from rdd.measures import *
 
 def simrank(G, u):
@@ -24,5 +25,18 @@ def simrank(G, u):
     df['simrank'] = np.log10(df['simrank'])
     
     # print(df)
+
+    return df
+
+def k_means(df, measure_vector, k):
+    kmeans = KMeans(n_clusters=k) 
+    
+    feats = []
+    for m in measure_vector:
+        feats.append( m.__name__ )
+
+    y = kmeans.fit_predict(df[feats])
+
+    df['k_mean_cluster'] = y
 
     return df
