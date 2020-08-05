@@ -4,6 +4,8 @@ import networkx as nx
 from rdd.Node import Node
 from rdd import measures
 from rdd import other_sims
+from rdd import ascos
+from rdd import cos_sim
 
 def visualize_rdd(g1, u, v, pos, m=measures.global_graph_degree):
     """takes a graph and plots it, coloring vertices by RDD
@@ -197,6 +199,133 @@ def visualize_simrank(g1, u, pos):
                               mode='markers+text'))
     fig.update_layout(template="plotly_dark", dragmode='pan')
     fig.update_traces(marker={'size': 10, 'color': df['simrank'], 'colorscale' : 'Jet'})
+    fig.write_html("graph.html", config={'scrollZoom':True})
+
+    # return fig.show(config={'scrollZoom':True})
+    return fig
+
+
+def visualize_ascos(g1, u):
+    """takes a graph and plots it, coloring vertices by RDD
+
+    Args:
+    -----
+        g1: a networkx graph
+        u: source node
+        v: target radius
+        m: a measure function from measures
+
+    Returns:
+    --------
+        fig: a figure object of a scatter plot"""
+
+    df = ascos.get_ascos(g1, u)
+    pos = spring_layout(g1)
+    nodes_x = []
+    nodes_y = []
+
+    for p in pos.values():
+        x, y = p[0], p[1]
+        nodes_x.append(x)
+        nodes_y.append(y)
+
+    df['nodes_x'] = nodes_x
+    df['nodes_y'] = nodes_y
+
+    edges_x = []
+    edges_y = []
+    for e in g1.edges():
+        x0,y0 = pos[e[0]]
+        x1,y1 = pos[e[1]]
+        edges_x.append(x0)
+        edges_x.append(x1)
+        # why do these need to be here?
+        edges_x.append(None)
+        edges_y.append(y0)
+        edges_y.append(y1)
+        # why do these need to be here?
+        edges_y.append(None)
+
+    # fig = px.scatter(df, x='nodes_x', y='nodes_y', text='node_name', custom_data=['rdd'], color='rdd')
+    # fig.update_traces(hovertemplate='Node: %{text}, RDD: %{customdata[0]}')
+    # fig.update_layout(font_size=20)
+    # fig.update_traces(marker={'size': 20})
+    # fig.add_trace(go.Scatter(x=edges_x, y=edges_y, mode='lines', line={'width': 3}))
+
+    fig = go.FigureWidget()
+    fig.add_trace(go.Scatter(x=edges_x, y=edges_y, name='edges', mode='lines', line={'width': 1}))
+    fig.add_trace(go.Scatter(x=df['nodes_x'],
+                              y=df['nodes_y'],
+                              customdata=df[['ascos', 'degree']].values,
+                              hovertemplate="Node: %{text} <br> Ascos: %{customdata[0]} <br> Degree: %{customdata[1]} <extra></extra>",
+                              text=df['node_name'],
+                              name="nodes",
+                              mode='markers+text'))
+    fig.update_layout(template="plotly_dark", dragmode='pan')
+    fig.update_traces(marker={'size': 10, 'color': df['ascos'], 'colorscale' : 'Jet'})
+    fig.write_html("graph.html", config={'scrollZoom':True})
+
+    # return fig.show(config={'scrollZoom':True})
+    return fig
+
+def visualize_cosine_similarity(g1, u):
+    """takes a graph and plots it, coloring vertices by RDD
+
+    Args:
+    -----
+        g1: a networkx graph
+        u: source node
+        v: target radius
+        m: a measure function from measures
+
+    Returns:
+    --------
+        fig: a figure object of a scatter plot"""
+
+    df = cos_sim.get_cosine(g1, u)
+    pos = spring_layout(g1)
+    nodes_x = []
+    nodes_y = []
+
+    for p in pos.values():
+        x, y = p[0], p[1]
+        nodes_x.append(x)
+        nodes_y.append(y)
+
+    df['nodes_x'] = nodes_x
+    df['nodes_y'] = nodes_y
+
+    edges_x = []
+    edges_y = []
+    for e in g1.edges():
+        x0,y0 = pos[e[0]]
+        x1,y1 = pos[e[1]]
+        edges_x.append(x0)
+        edges_x.append(x1)
+        # why do these need to be here?
+        edges_x.append(None)
+        edges_y.append(y0)
+        edges_y.append(y1)
+        # why do these need to be here?
+        edges_y.append(None)
+
+    # fig = px.scatter(df, x='nodes_x', y='nodes_y', text='node_name', custom_data=['rdd'], color='rdd')
+    # fig.update_traces(hovertemplate='Node: %{text}, RDD: %{customdata[0]}')
+    # fig.update_layout(font_size=20)
+    # fig.update_traces(marker={'size': 20})
+    # fig.add_trace(go.Scatter(x=edges_x, y=edges_y, mode='lines', line={'width': 3}))
+
+    fig = go.FigureWidget()
+    fig.add_trace(go.Scatter(x=edges_x, y=edges_y, name='edges', mode='lines', line={'width': 1}))
+    fig.add_trace(go.Scatter(x=df['nodes_x'],
+                              y=df['nodes_y'],
+                              customdata=df[['cos_sim', 'degree']].values,
+                              hovertemplate="Node: %{text} <br> CosSim: %{customdata[0]} <br> Degree: %{customdata[1]} <extra></extra>",
+                              text=df['node_name'],
+                              name="nodes",
+                              mode='markers+text'))
+    fig.update_layout(template="plotly_dark", dragmode='pan')
+    fig.update_traces(marker={'size': 10, 'color': df['cos_sim'], 'colorscale' : 'Jet'})
     fig.write_html("graph.html", config={'scrollZoom':True})
 
     # return fig.show(config={'scrollZoom':True})
