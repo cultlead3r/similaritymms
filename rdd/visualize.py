@@ -5,7 +5,7 @@ from rdd.Node import Node
 from rdd import measures
 from rdd import other_sims
 
-def visualize_rdd(g1, u, v, m=measures.global_graph_degree):
+def visualize_rdd(g1, u, v, pos, m=measures.global_graph_degree):
     """takes a graph and plots it, coloring vertices by RDD
 
     Args:
@@ -21,7 +21,7 @@ def visualize_rdd(g1, u, v, m=measures.global_graph_degree):
     # TODO: why is the argument for radius 'v'?
     df = measures.get_rdds_for_visuals(g1, u, m, v)
     # pos = spring_layout(g1)
-    pos = nx.spring_layout(g1, scale=5)
+    # pos = nx.spring_layout(g1, scale=5)
     nodes_x = []
     nodes_y = []
 
@@ -69,9 +69,9 @@ def visualize_rdd(g1, u, v, m=measures.global_graph_degree):
     return fig.show(config={'scrollZoom':True})
 
 
-def visualize_rdd_vector(g1, u, r, measure_vector):
+def visualize_rdd_vector(g1, u, r, pos, measure_vector):
     df = measures.get_rdds_for_visuals_vector(g1, u, measure_vector, r)
-    pos = nx.spring_layout(g1)
+    # pos = nx.spring_layout(g1)
     nodes_x = []
     nodes_y = []
 
@@ -112,22 +112,34 @@ def visualize_rdd_vector(g1, u, r, measure_vector):
                               text=df['node_name'],
                               name="Node",
                               mode='markers+text'))
-    fig.update_layout(template="plotly_dark", dragmode='pan',
-                      annotations=[{'x': df.iloc[0]['nodes_x'],
-                                    'y': df.iloc[0]['nodes_y'],
-                                    'axref': 'x',
-                                    'ayref': 'y',
-                                    'arrowsize': 4,
-                                    'arrowcolor': 'red',
-                                    'showarrow': True,
-                                    'arrowhead': 3}])
-    fig.update_traces(marker={'size': 10, 'color': df['normalized_rdd'], 'colorscale' : 'Jet'})
+    fig.update_layout(template="plotly_dark", dragmode='pan',)
+                      # annotations=[{'x': df.iloc[0]['nodes_x'],
+                      #               'y': df.iloc[0]['nodes_y'],
+                      #               'axref': 'x',
+                      #               'ayref': 'y',
+                      #               'arrowsize': 4,
+                      #               'arrowcolor': 'red',
+                      #               'showarrow': True,
+                      #               'arrowhead': 3}])
+    fig.update_traces(marker={'size': 15, 'color': df['normalized_rdd'], 'colorscale' : 'Jet'})
     fig.write_html("graph.html", config={'scrollZoom':True})
-
     return fig
 
 
-def visualize_simrank(g1, u):
+def add_markers(figure, nodes):
+    annotations = [{'x': figure.data[1]['x'][n - 1],
+                                    'y': figure.data[1]['y'][n - 1],
+                                    'axref': 'x',
+                                    'ayref': 'y',
+                                    'arrowsize': 2,
+                                    'arrowcolor': 'red',
+                                    'showarrow': True,
+                                    'arrowhead': 3} for n in nodes]
+    figure.update_layout(annotations=annotations)
+    return figure
+
+
+def visualize_simrank(g1, u, pos):
     """takes a graph and plots it, coloring vertices by RDD
 
     Args:
@@ -142,7 +154,7 @@ def visualize_simrank(g1, u):
         fig: a figure object of a scatter plot"""
 
     df = other_sims.simrank(g1, u)
-    pos = nx.spring_layout(g1)
+    # pos = nx.spring_layout(g1)
     nodes_x = []
     nodes_y = []
 
@@ -193,7 +205,7 @@ def visualize_simrank(g1, u):
 def visualize_rdd_vector_kmeans(g1, u, r, measure_vector, k=3):
     df = measures.get_rdds_for_visuals_vector(g1, u, measure_vector, r)
     df = other_sims.k_means(df, measure_vector, k)
-    pos = spring_layout(g1)
+    pos = nx.spring_layout(g1)
     nodes_x = []
     nodes_y = []
 
