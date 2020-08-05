@@ -19,7 +19,7 @@ def simrank(G, u):
     d = {'node_name': node_list, 'degree': degree_list, 'simrank': sim_list}
     df = pd.DataFrame(d)
 
-    print(df)
+    # print(df)
 
     df['simrank'] = normalize_rdd(df, 1, 1000, 'simrank')
     df['simrank'] = np.log10(df['simrank'])
