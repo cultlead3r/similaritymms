@@ -1,6 +1,6 @@
 import pandas as pd
 import plotly.graph_objects as go
-from networkx import spring_layout
+import networkx as nx
 from rdd.Node import Node
 from rdd import measures
 from rdd import other_sims
@@ -20,7 +20,8 @@ def visualize_rdd(g1, u, v, m=measures.global_graph_degree):
         fig: a figure object of a scatter plot"""
     # TODO: why is the argument for radius 'v'?
     df = measures.get_rdds_for_visuals(g1, u, m, v)
-    pos = spring_layout(g1)
+    # pos = spring_layout(g1)
+    pos = nx.spring_layout(g1, scale=5)
     nodes_x = []
     nodes_y = []
 
@@ -70,7 +71,7 @@ def visualize_rdd(g1, u, v, m=measures.global_graph_degree):
 
 def visualize_rdd_vector(g1, u, r, measure_vector):
     df = measures.get_rdds_for_visuals_vector(g1, u, measure_vector, r)
-    pos = spring_layout(g1)
+    pos = nx.spring_layout(g1)
     nodes_x = []
     nodes_y = []
 
@@ -141,7 +142,7 @@ def visualize_simrank(g1, u):
         fig: a figure object of a scatter plot"""
 
     df = other_sims.simrank(g1, u)
-    pos = spring_layout(g1)
+    pos = nx.spring_layout(g1)
     nodes_x = []
     nodes_y = []
 
