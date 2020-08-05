@@ -115,15 +115,45 @@ def visualize_rdd_vector(g1, u, r, pos, measure_vector):
                               name="Node",
                               mode='markers+text'))
     fig.update_layout(template="plotly_dark", dragmode='pan',)
-                      # annotations=[{'x': df.iloc[0]['nodes_x'],
-                      #               'y': df.iloc[0]['nodes_y'],
-                      #               'axref': 'x',
-                      #               'ayref': 'y',
-                      #               'arrowsize': 4,
-                      #               'arrowcolor': 'red',
-                      #               'showarrow': True,
-                      #               'arrowhead': 3}])
     fig.update_traces(marker={'size': 15, 'color': df['normalized_rdd'], 'colorscale' : 'Jet'})
+    fig.write_html("graph.html", config={'scrollZoom':True})
+    return fig
+
+
+def draw(g1):
+    """Draws a NetworkX Graph with Plotly."""
+    pos = nx.spring_layout(g1)
+    nodes_x = []
+    nodes_y = []
+
+    for p in pos.values():
+        x, y = p[0], p[1]
+        nodes_x.append(x)
+        nodes_y.append(y)
+
+    edges_x = []
+    edges_y = []
+    for e in g1.edges():
+        x0,y0 = pos[e[0]]
+        x1,y1 = pos[e[1]]
+        edges_x.append(x0)
+        edges_x.append(x1)
+        # why do these need to be here?
+        edges_x.append(None)
+        edges_y.append(y0)
+        edges_y.append(y1)
+        # why do these need to be here?
+        edges_y.append(None)
+
+    fig = go.FigureWidget()
+    fig.add_trace(go.Scatter(x=edges_x, y=edges_y, name='edges', mode='lines', line={'width': 1}))
+    fig.add_trace(go.Scatter(x=nodes_x,
+                             y=nodes_y,
+                             text=list(g1.nodes),
+                             name='Node',
+                             mode='markers+text'))
+    fig.update_layout(template="plotly_dark", dragmode='pan',)
+    fig.update_traces(marker={'size': 15, 'colorscale' : 'Jet'})
     fig.write_html("graph.html", config={'scrollZoom':True})
     return fig
 
