@@ -76,19 +76,20 @@ def get_cosine(G, u):
     
     for node in my_nodes:
         if node == u:
-            my_sims.append(0)
+            my_sims.append(1)
             continue
 
         if sims[u].get(node) != None:
             my_sims.append(sims[u][node])
         else:
-            my_sims.append(1)
+            my_sims.append(0)
     
     d = {'node_name': my_nodes, 'degree': my_degree, 'cos_sim': my_sims}
     df = pd.DataFrame(d)
     
-    df['cos_sim'] = normalize_rdd(df, 1, 10, 'cos_sim')
-    df['cos_sim'] = np.log10(df['cos_sim'])
+    # df['cos_sim'] = (1-df['cos_sim'])
+    df['cos_sim'] = normalize_rdd(df, 1, 1000, 'cos_sim')
+    df['cos_sim'] = np.log(df['cos_sim'])
 
     return df
     

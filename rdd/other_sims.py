@@ -2,6 +2,7 @@ import networkx as nx
 import pandas as pd
 import numpy as np
 from sklearn.cluster import KMeans
+from sklearn.cluster import MeanShift
 from rdd.measures import *
 
 def simrank(G, u):
@@ -38,5 +39,39 @@ def k_means(df, measure_vector, k):
     y = kmeans.fit_predict(df[feats])
 
     df['k_mean_cluster'] = y
+
+    return df
+
+def k_means_other(df, target_columns, k):
+    kmeans = KMeans(n_clusters=k) 
+    
+    feats = target_columns
+    
+    y = kmeans.fit_predict(df[feats])
+
+    df['k_mean_cluster'] = y
+
+    return df
+
+def mean_shift(df, measure_vector):
+    mean_shi = MeanShift()
+    
+    feats = []
+    for m in measure_vector:
+        feats.append( m.__name__ )
+
+    y = mean_shi.fit_predict(df[feats])
+
+    df['mean_shift_cluster'] = y
+
+    return df
+
+def mean_shift_other(df, target_columns):
+    mean_shi = MeanShift()
+    
+    feats = target_columns
+    y = mean_shi.fit_predict(df[feats])
+
+    df['mean_shift_cluster'] = y
 
     return df
