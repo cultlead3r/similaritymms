@@ -29,7 +29,7 @@ def simrank(G, u):
 
     return df
 
-def k_means(df, measure_vector, k):
+def k_means(df, measure_vector, k=3):
     kmeans = KMeans(n_clusters=k) 
     
     feats = []
@@ -42,7 +42,7 @@ def k_means(df, measure_vector, k):
 
     return df
 
-def k_means_other(df, target_columns, k):
+def k_means_other(df, target_columns, k=3):
     kmeans = KMeans(n_clusters=k) 
     
     feats = target_columns
