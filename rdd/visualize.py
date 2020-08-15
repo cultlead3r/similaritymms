@@ -1,28 +1,29 @@
-import pandas as pd
 import plotly.graph_objects as go
 import networkx as nx
-from rdd.Node import Node
+from rdd import RDD
 from rdd import measures
 from rdd import other_sims
 from rdd import ascos
 from rdd import cos_sim
 
 
-def visualize_rdd(g1, u, v, pos, m=measures.global_graph_degree):
+def visualize_rdd(g1, u, r, pos, m=measures.global_graph_degree):
     """takes a graph and plots it, coloring vertices by RDD
 
     Args:
     -----
         g1: a networkx graph
         u: source node
-        v: target radius
         m: a measure function from measures
+        r: target radius
+
 
     Returns:
     --------
-        fig: a figure object of a scatter plot"""
-    # TODO: why is the argument for radius 'v'?
-    df = measures.get_rdds_for_visuals(g1, u, m, v)
+        fig: a figure object of a scatter plot
+
+    """
+    df = RDD.get_rdds_for_visuals(g1, u, m, r)
     # pos = spring_layout(g1)
     # pos = nx.spring_layout(g1, scale=5)
     nodes_x = []
@@ -43,18 +44,10 @@ def visualize_rdd(g1, u, v, pos, m=measures.global_graph_degree):
         x1, y1 = pos[e[1]]
         edges_x.append(x0)
         edges_x.append(x1)
-        # why do these need to be here?
         edges_x.append(None)
         edges_y.append(y0)
         edges_y.append(y1)
-        # why do these need to be here?
         edges_y.append(None)
-
-        # fig = px.scatter(df, x='nodes_x', y='nodes_y', text='node_name', custom_data=['rdd'], color='rdd')
-    # fig.update_traces(hovertemplate='Node: %{text}, RDD: %{customdata[0]}')
-    # fig.update_layout(font_size=20)
-    # fig.update_traces(marker={'size': 20})
-    # fig.add_trace(go.Scatter(x=edges_x, y=edges_y, mode='lines', line={'width': 3}))
 
     fig = go.Figure()
     fig.add_trace(go.Scatter(x=edges_x, y=edges_y, name='edges', mode='lines', line={'width': 1}))
@@ -68,12 +61,11 @@ def visualize_rdd(g1, u, v, pos, m=measures.global_graph_degree):
     fig.update_layout(template="plotly_dark", dragmode='pan')
     fig.update_traces(marker={'size': 10, 'color': df['rdd'], 'colorscale': 'Jet'})
     fig.write_html("graph.html", config={'scrollZoom': True})
-
     return fig.show(config={'scrollZoom': True})
 
 
 def visualize_rdd_vector(g1, u, r, pos, measure_vector):
-    df = measures.get_rdds_for_visuals_vector(g1, u, measure_vector, r)
+    df = RDD.get_rdds_for_visuals_vector(g1, u, measure_vector, r)
     # pos = nx.spring_layout(g1)
     nodes_x = []
     nodes_y = []
@@ -99,7 +91,6 @@ def visualize_rdd_vector(g1, u, r, pos, measure_vector):
         edges_y.append(y1)
         # why do these need to be here?
         edges_y.append(None)
-
     # get the custom_data and build the hover template from the DataFrame column names
     custom_data = df.columns
     hover_template = ""
@@ -206,11 +197,9 @@ def visualize_simrank(g1, u, pos):
         x1, y1 = pos[e[1]]
         edges_x.append(x0)
         edges_x.append(x1)
-        # why do these need to be here?
         edges_x.append(None)
         edges_y.append(y0)
         edges_y.append(y1)
-        # why do these need to be here?
         edges_y.append(None)
 
     # fig = px.scatter(df, x='nodes_x', y='nodes_y', text='node_name', custom_data=['rdd'], color='rdd')
@@ -270,18 +259,10 @@ def visualize_ascos(g1, u, pos):
         x1, y1 = pos[e[1]]
         edges_x.append(x0)
         edges_x.append(x1)
-        # why do these need to be here?
         edges_x.append(None)
         edges_y.append(y0)
         edges_y.append(y1)
-        # why do these need to be here?
         edges_y.append(None)
-
-    # fig = px.scatter(df, x='nodes_x', y='nodes_y', text='node_name', custom_data=['rdd'], color='rdd')
-    # fig.update_traces(hovertemplate='Node: %{text}, RDD: %{customdata[0]}')
-    # fig.update_layout(font_size=20)
-    # fig.update_traces(marker={'size': 20})
-    # fig.add_trace(go.Scatter(x=edges_x, y=edges_y, mode='lines', line={'width': 3}))
 
     fig = go.FigureWidget()
     fig.add_trace(go.Scatter(x=edges_x, y=edges_y, name='edges', mode='lines', line={'width': 1}))
@@ -295,7 +276,6 @@ def visualize_ascos(g1, u, pos):
     fig.update_layout(template="plotly_dark", dragmode='pan')
     fig.update_traces(marker={'size': 15, 'color': df['ascos'], 'colorscale': 'Jet'})
     fig.write_html("graph.html", config={'scrollZoom': True})
-
     # return fig.show(config={'scrollZoom':True})
     return fig
 
@@ -305,10 +285,9 @@ def visualize_cosine_similarity(g1, u, pos):
 
     Args:
     -----
-        g1: a networkx graph
-        u: source node
-        v: target radius
-        m: a measure function from measures
+        g1 (graph): a networkx graph
+        u (int): source node
+        pos (dict): position
 
     Returns:
     --------
@@ -341,12 +320,6 @@ def visualize_cosine_similarity(g1, u, pos):
         # why do these need to be here?
         edges_y.append(None)
 
-    # fig = px.scatter(df, x='nodes_x', y='nodes_y', text='node_name', custom_data=['rdd'], color='rdd')
-    # fig.update_traces(hovertemplate='Node: %{text}, RDD: %{customdata[0]}')
-    # fig.update_layout(font_size=20)
-    # fig.update_traces(marker={'size': 20})
-    # fig.add_trace(go.Scatter(x=edges_x, y=edges_y, mode='lines', line={'width': 3}))
-
     fig = go.FigureWidget()
     fig.add_trace(go.Scatter(x=edges_x, y=edges_y, name='edges', mode='lines', line={'width': 1}))
     fig.add_trace(go.Scatter(x=df['nodes_x'],
@@ -359,13 +332,12 @@ def visualize_cosine_similarity(g1, u, pos):
     fig.update_layout(template="plotly_dark", dragmode='pan')
     fig.update_traces(marker={'size': 15, 'color': df['cos_sim'], 'colorscale': 'Jet'})
     fig.write_html("graph.html", config={'scrollZoom': True})
-
     # return fig.show(config={'scrollZoom':True})
     return fig
 
 
 def visualize_rdd_vector_kmeans(g1, u, r, measure_vector, pos, k=3, vistype=1):
-    df = measures.get_rdds_for_visuals_vector(g1, u, measure_vector, r)
+    df = RDD.get_rdds_for_visuals_vector(g1, u, measure_vector, r)
     df = other_sims.k_means(df, measure_vector, k)
     # pos = nx.spring_layout(g1)
     nodes_x = []
@@ -497,7 +469,7 @@ def visualize_rdd_vector_kmeans_others(g1, u, target_column, target_function,pos
     return fig
 
 def visualize_rdd_vector_mean_shift(g1, u, r, measure_vector, pos, vistype=1):
-    df = measures.get_rdds_for_visuals_vector(g1, u, measure_vector, r)
+    df = RDD.get_rdds_for_visuals_vector(g1, u, measure_vector, r)
     df = other_sims.mean_shift(df, measure_vector)
     # pos = nx.spring_layout(g1)
     nodes_x = []
@@ -518,11 +490,9 @@ def visualize_rdd_vector_mean_shift(g1, u, r, measure_vector, pos, vistype=1):
         x1, y1 = pos[e[1]]
         edges_x.append(x0)
         edges_x.append(x1)
-        # why do these need to be here?
         edges_x.append(None)
         edges_y.append(y0)
         edges_y.append(y1)
-        # why do these need to be here?
         edges_y.append(None)
 
     # get the custom_data and build the hover template from the DataFrame column names
@@ -643,7 +613,7 @@ def visualize_rdd_vector_3D2(g1, u, r, pos, measure_vector, df_functions, df_sea
             df_list.append(f(g1, u))
 
         graphs_z.append(z)
-        z+=z_offset
+        z += z_offset
 
     nodes_x = []
     nodes_y = []
@@ -655,8 +625,8 @@ def visualize_rdd_vector_3D2(g1, u, r, pos, measure_vector, df_functions, df_sea
 
     nodes_index =[]
     for val in range(len(graphs_z)):
-        df=df_list[val]
-        ni=0
+        df = df_list[val]
+        ni = 0
         # pos = nx.spring_layout(g1)
         for p in pos.values():
             x, y = p[0], p[1]
@@ -664,11 +634,11 @@ def visualize_rdd_vector_3D2(g1, u, r, pos, measure_vector, df_functions, df_sea
             nodes_y.append(y)
             nodes_z.append(graphs_z[val])
             nodes_index.append(df['node_name'][ni])
-            ni+=1
+            ni += 1
 
-        #df_list[val]['nodes_x'] = nodes_x
-        #df_list[val]['nodes_y'] = nodes_y
-        #df_list[val]['nodes_x'] = nodes_x
+        # df_list[val]['nodes_x'] = nodes_x
+        # df_list[val]['nodes_y'] = nodes_y
+        # df_list[val]['nodes_x'] = nodes_x
 
         lis = list(df_list[val][df_search[val]])
 
@@ -680,33 +650,21 @@ def visualize_rdd_vector_3D2(g1, u, r, pos, measure_vector, df_functions, df_sea
             z0, z1 = graphs_z[val], graphs_z[val]
             edges_x.append(x0)
             edges_x.append(x1)
-            # why do these need to be here?
             edges_x.append(None)
             edges_y.append(y0)
             edges_y.append(y1)
-            # why do these need to be here?
             edges_y.append(None)
             edges_z.append(z0)
             edges_z.append(z1)
-            # why do I need this?
             edges_z.append(None)
-
-    # get the custom_data and build the hover template from the DataFrame column names
-    #custom_data = df.columns
-    #hover_template = ""
-    #for i, m in enumerate(custom_data):
-    #    hover_template += "".join(m + ":" + ' %{customdata[' + str(i) + ']} <br> ')
 
     fig = go.FigureWidget()
     fig.add_trace(go.Scatter3d(x=edges_x, y=edges_y, z=edges_z, name='edges', mode='lines', line={'width': 1}))
     fig.add_trace(go.Scatter3d(x=nodes_x,
                              y=nodes_y,
                              z=nodes_z,
-    #                         customdata=custom_data,
-    #                         hovertemplate=hover_template,
                              text=nodes_index,
                              name="Node",
-                             #mode='markers+text',
                              mode='markers'
                              ))
     fig.update_layout(template="plotly_dark", dragmode='pan', )
@@ -737,7 +695,7 @@ def visualize_rdd_vector_3D(g1, u, r, pos, measure_vectors, df_functions, df_sea
         nodes_y = []
         nodes_z = []
         node_index = []
-        df=df_list[val]
+        df = df_list[val]
         for p in pos.values():
             x, y = p[0], p[1]
             nodes_x.append(x)
@@ -745,7 +703,7 @@ def visualize_rdd_vector_3D(g1, u, r, pos, measure_vectors, df_functions, df_sea
             nodes_z.append(graphs_z[val])
             node_index.append(ni)
             print(ni)
-            ni+=1
+            ni += 1
 
         df['nodes_x'] = nodes_x
         df['nodes_y'] = nodes_y
@@ -764,15 +722,12 @@ def visualize_rdd_vector_3D(g1, u, r, pos, measure_vectors, df_functions, df_sea
 
             edges_x.append(x0)
             edges_x.append(x1)
-            # why do these need to be here?
             edges_x.append(None)
             edges_y.append(y0)
             edges_y.append(y1)
-            # why do these need to be here?
             edges_y.append(None)
             edges_z.append(z0)
             edges_z.append(z1)
-            # why need?
             edges_z.append(None)
 
         # get the custom_data and build the hover template from the DataFrame column names
@@ -790,7 +745,7 @@ def visualize_rdd_vector_3D(g1, u, r, pos, measure_vectors, df_functions, df_sea
                                 text=df['node_name'],
                                 name="Node",
                                 mode='markers'))
-        fig.update_layout(template="plotly_dark", dragmode='pan', )
+        fig.update_layout(template = "plotly_dark", dragmode='pan', )
     fig.update_traces(marker={'size': 10, 'color': color_vals, 'colorscale': 'Jet'})
     fig.write_html("graph.html", config={'scrollZoom': True})
     return fig

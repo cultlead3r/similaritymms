@@ -40,7 +40,6 @@ g2.add_edges_from([
 # visualize_rdd(g1).show()
 
 import networkx as nx
-from Node import Node
 from RDD import *
 import measures
 # from measures import *

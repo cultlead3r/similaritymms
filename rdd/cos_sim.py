@@ -8,6 +8,7 @@ Implement cosine similarity
 #    NetworkX:http://networkx.lanl.gov/.
 import networkx as nx
 import pandas as pd
+import numpy as np
 from rdd.measures import *
 
 __author__ = """Hung-Hsuan Chen (hhchen@psu.edu)"""

@@ -131,6 +131,6 @@ def get_ascos(G, u):
     df = pd.DataFrame(d)
     
     df['ascos'] = normalize_rdd(df, 1, 1000, 'ascos')
-    df['ascos'] = np.log10(df['ascos'])
+    df['ascos'] = numpy.log10(df['ascos'])
     
     return (df)

@@ -9,6 +9,8 @@ from collections import defaultdict
 from rdd.Node import Node
 import networkx as nx
 import math
+import pandas as pd
+import numpy.linalg as la
 
 
 def populate_node_list(shortest_paths):
@@ -66,14 +68,15 @@ def get_crd(list_of_nodes):
 
 def ensure_radial_parity(crd1, crd2):
     """Make sure both CRDs have the same maximum radius value"""
+    crd1_length, crd2_length = len(crd1), len(crd2)
     if len(crd1) > len(crd2):
         length_difference = len(crd1) - len(crd2)
         for i in range(length_difference):
-            crd2[len(crd2)+i] = crd2[len(crd2) - 1]
-    elif len(crd2) > len(crd1): 
+            crd2[crd2_length + i] = crd2[crd2_length - 1]
+    elif len(crd2) > len(crd1):
         length_difference = len(crd2) - len(crd1)
         for i in range(length_difference):
-            crd1[len(crd1)+i] = crd1[len(crd1) - 1]
+            crd1[crd1_length + i] = crd1[crd1_length - 1]
 
 
 # TODO Make this the union and get rid of the shit above
@@ -86,7 +89,6 @@ def get_crd_union(crd1, crd2):
 def rdd_default_scale(rdd, r, crd1, crd2):
     """Creates a summation log scale for our rdd"""
     rdd = rdd + math.exp(-r) * abs(crd1[r] - crd2[r])
-
     return rdd
 
 
@@ -138,7 +140,6 @@ def paths_to_graph(given_paths):
     adj_list = list(dict.fromkeys(adj_list))
     g = nx.Graph()
     g.add_edges_from(adj_list)
-
     return g
 
 
@@ -157,3 +158,153 @@ def nodes_to_graph(network, node_list):
     """
     g = network.subgraph(node_list)
     return g
+
+
+def realworld_distance_compare(network, u, v, measure, radius, network2=None):
+    """Compares the radial distribution distance between two nodes in a single or two graphs.
+
+    Args
+    ----
+        network: a networkx Graph object
+        u: an instance of our Node class #  gets converted to string to match nx.Graph
+        v: an instance of our Node class #  gets converted to string to match nx.Graph
+        measure: a function that returns a list of values representing measures for each node
+        radius: the maximum radius we want to compare with
+        network2: Used if node v is from a different graph
+
+    Returns:
+    --------
+        radial distribution distance value of u compared to v
+
+    """
+    # Get the shortest paths for each node up to the specified radius
+    real_paths1 = nx.single_source_shortest_path(network, u, radius)
+    if network2:
+        real_paths2 = nx.single_source_shortest_path(network2, v, radius)
+    else:
+        real_paths2 = nx.single_source_shortest_path(network, v, radius)
+
+    # Create a list of Node objects from our shortest paths lists
+    node_list1 = populate_node_list(real_paths1)
+    node_list2 = populate_node_list(real_paths2)
+
+    measures_u = measure(network, node_list1)
+    if network2:
+        measures_v = measure(network2, node_list2)
+    else:
+        measures_v = measure(network, node_list2)
+
+    # take the list of degrees and set the appropriate field in all the Node objects in the list
+    add_measures_to_node(node_list1, measures_u)
+    add_measures_to_node(node_list2, measures_v)
+
+    # gets the cumulative radial distributions for every radius up to threshold
+    crd1 = get_crd(node_list1)
+    crd2 = get_crd(node_list2)
+
+    # each radial distribution must go up to the same threshold
+    ensure_radial_parity(crd1, crd2)
+    return get_rdd(crd1, crd2)
+
+
+def get_rdds_for_visuals(network, u, measure, radius):
+    """
+    Args:
+        network: a networkx Graph object
+        u: Node object from which the other nodes will be considered up to radius
+        measure: measures to be used that influence RDD values
+        radius: how many steps from root node to consider
+
+    Returns:
+        df: pandas dataframe of nodes and information
+
+    """
+    rdd_list = []
+    node_list = []
+    rad_list = []
+    degree_list = []
+
+    # Populate the lists used to construct dataframe of information from nodes
+    for node in network:
+        r = realworld_distance_compare(network, u, node, measure, radius)
+        if r == 0:
+            rdd_list.append(0)
+        else:
+            # rdd_list.append(math.log(r, 10))
+            # rdd_list.append(np.tanh(r))
+            rdd_list.append(r)
+
+        # TODO Fix this - rad_list is broken - adding 1 just to make it work
+        # rad_list.append(len(shortest_paths[node]) - 1)
+        rad_list.append(1)
+
+        node_list.append(node)
+        degree_list.append(network.degree(node))
+    d = {'node_name': node_list, 'rdd': rdd_list, 'radius': rad_list, 'degree': degree_list}
+    df = pd.DataFrame(d)
+
+    df['rdd'] = normalize_rdd(df, 1, 1000, 'rdd')
+    df['rdd'] = np.log10(df['rdd'])
+    # df['rdd'] = np.tanh(df['rdd'])
+
+    return df
+
+
+def get_rdds_for_visuals_vector(network, u, measure_vector, radius):
+    node_list = []
+    degree_list = []
+    rad_list = []
+
+    # Populate and construct a DataFrame with basic node information
+    for node in network:
+        node_list.append(node)
+        degree_list.append(network.degree(node))
+        # TODO: Broken
+        rad_list.append(1)
+    df = pd.DataFrame({'node_name': node_list, 'radius': rad_list, 'degree': degree_list})
+
+    # Now iterate through the measures and add them as columns to the frame
+    measure_lists = []
+    for m in measure_vector:
+        rdd_list = []
+        for node in network:
+            r = realworld_distance_compare(network, u, node, m, radius)
+            rdd_list.append(r)
+        # we use __name__ to get the string name of the function
+        df[m.__name__] = rdd_list
+        measure_lists.append(rdd_list)
+
+    # for m in measure_vector:
+    # df[m.__name__] = normalize_rdd(df, 1, 1000, m.__name__)
+    # df[m.__name__] = np.log10(df[m.__name__])
+    df_norm = df[list(map(lambda f: f.__name__, measure_vector))]
+    df['normalized_rdd'] = la.norm(df_norm, axis=1)
+    # df['normalized_rdd'] = normalize_rdd(df, 1, 1000, 'normalized_rdd')
+    # df['normalized_rdd'] = np.log10(df['normalized_rdd'])
+    return df
+
+
+def normalize_rdd(df, d_min, d_max, col):
+    r_min = df[col].min()
+    r_max = df[col].max()
+    t_min = d_min
+    t_max = d_max
+
+    return ((df[col] - r_min) / (r_max - r_min)) * (t_max - t_min) + t_min
+
+
+# TODO: Not working yet
+def get_rdds_for_visuals_diff_graph(network, u, measure, radius, network2):
+    shortest_paths = nx.single_source_shortest_path(network, u, radius)
+    rdd_list = []
+    node_list = []
+    rad_list = []
+    # used for single graph. Add multigraph later.
+    for node in network:
+        rdd_list.append(realworld_distance_compare(network, u, node, measure, radius))
+        rad_list.append(len(shortest_paths[node]) - 1)
+        node_list.append(node)
+
+    d = {'node_name': node_list, 'rdd': rdd_list, 'radius': rad_list}
+    df = pd.DataFrame(d)
+    return df
