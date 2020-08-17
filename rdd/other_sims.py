@@ -23,11 +23,42 @@ def simrank(G, u):
     # print(df)
 
     df['simrank'] = normalize_rdd(df, 1, 1000, 'simrank')
+    
     df['simrank'] = np.log10(df['simrank'])
     
     # print(df)
 
     return df
+
+def simrank_test(G, u, r):
+    
+    real_paths1 = nx.single_source_shortest_path(G, u, r)
+
+    g = G.subgraph(list(real_paths1.keys()))
+
+    sim = nx.simrank_similarity(g, u)
+    
+    sim_list = []
+    node_list = []
+    degree_list = []
+
+    for n in sim:
+        sim_list.append(sim[n])
+        node_list.append(n)
+        degree_list.append(G.degree(n))
+
+    d = {'node_name': node_list, 'degree': degree_list, 'simrank': sim_list}
+    df = pd.DataFrame(d)
+
+    # print(df)
+
+    df['simrank'] = normalize_rdd(df, 1, 1000, 'simrank')
+    df['simrank'] = np.log10(df['simrank'])
+    
+    # print(df)
+
+    return df
+
 
 def k_means(df, measure_vector, k=3):
     kmeans = KMeans(n_clusters=k) 

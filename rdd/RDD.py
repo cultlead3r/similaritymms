@@ -10,6 +10,7 @@ from rdd.Node import Node
 import networkx as nx
 import math
 import pandas as pd
+import numpy as np
 import numpy.linalg as la
 
 
