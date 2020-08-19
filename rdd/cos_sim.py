@@ -93,4 +93,37 @@ def get_cosine(G, u):
     df['cos_sim'] = np.log(df['cos_sim'])
 
     return df
+
+def get_cosine_radius(G, u, r):
+    real_paths1 = nx.single_source_shortest_path(G, u, r)
+    g = G.subgraph(list(real_paths1.keys()))
+
+    sims = cosine(g)
+
+    my_nodes = []
+    my_degree = []
+    my_sims = []
+    
+    for i in sims:
+        my_nodes.append(i)
+        my_degree.append(G.degree(i))
+    
+    for node in my_nodes:
+        if node == u:
+            my_sims.append(1)
+            continue
+
+        if sims[u].get(node) != None:
+            my_sims.append(sims[u][node])
+        else:
+            my_sims.append(0)
+    
+    d = {'node_name': my_nodes, 'degree': my_degree, 'cos_sim': my_sims}
+    df = pd.DataFrame(d)
+    
+    # df['cos_sim'] = (1-df['cos_sim'])
+    df['cos_sim'] = normalize_rdd(df, 1, 1000, 'cos_sim')
+    df['cos_sim'] = np.log(df['cos_sim'])
+
+    return df
     

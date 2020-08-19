@@ -284,6 +284,42 @@ def get_rdds_for_visuals_vector(network, u, measure_vector, radius):
     # df['normalized_rdd'] = np.log10(df['normalized_rdd'])
     return df
 
+def get_rdds_for_visuals_vector_radius(network, u, measure_vector, radius):
+    node_list = []
+    degree_list = []
+    rad_list = []
+
+    real_paths1 = nx.single_source_shortest_path(network, u, radius)
+
+    network = network.subgraph(list(real_paths1.keys()))
+
+    # Populate and construct a DataFrame with basic node information
+    for node in network:
+        node_list.append(node)
+        degree_list.append(network.degree(node))
+        # TODO: Broken
+        rad_list.append(1)
+    df = pd.DataFrame({'node_name': node_list, 'radius': rad_list, 'degree': degree_list})
+
+    # Now iterate through the measures and add them as columns to the frame
+    measure_lists = []
+    for m in measure_vector:
+        rdd_list = []
+        for node in network:
+            r = realworld_distance_compare(network, u, node, m, radius)
+            rdd_list.append(r)
+        # we use __name__ to get the string name of the function
+        df[m.__name__] = rdd_list
+        measure_lists.append(rdd_list)
+
+    # for m in measure_vector:
+    # df[m.__name__] = normalize_rdd(df, 1, 1000, m.__name__)
+    # df[m.__name__] = np.log10(df[m.__name__])
+    df_norm = df[list(map(lambda f: f.__name__, measure_vector))]
+    df['normalized_rdd'] = la.norm(df_norm, axis=1)
+    # df['normalized_rdd'] = normalize_rdd(df, 1, 1000, 'normalized_rdd')
+    # df['normalized_rdd'] = np.log10(df['normalized_rdd'])
+    return df
 
 def normalize_rdd(df, d_min, d_max, col):
     r_min = df[col].min()

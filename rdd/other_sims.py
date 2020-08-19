@@ -30,7 +30,7 @@ def simrank(G, u):
 
     return df
 
-def simrank_test(G, u, r):
+def simrank_radius(G, u, r):
     
     real_paths1 = nx.single_source_shortest_path(G, u, r)
 

@@ -115,22 +115,46 @@ def _is_converge(sim, sim_old, nrow, ncol, eps=1e-4):
   return True
 
 def get_ascos(G, u):
-    nodes, sims = ascos(G)
+  nodes, sims = ascos(G)
 
-    my_nodes = []
-    my_degrees = []
-    my_sims = []
-    for n in nodes:
-        my_nodes.append(n)
-        my_degrees.append(G.degree(n))
+  my_nodes = []
+  my_degrees = []
+  my_sims = []
+  for n in nodes:
+      my_nodes.append(n)
+      my_degrees.append(G.degree(n))
 
-    i = list(nodes).index(u)
-    my_sims = sims[i]
+  i = list(nodes).index(u)
+  my_sims = sims[i]
 
-    d = {'node_name': my_nodes, 'degree': my_degrees, 'ascos': my_sims}
-    df = pd.DataFrame(d)
-    
-    df['ascos'] = normalize_rdd(df, 1, 1000, 'ascos')
-    df['ascos'] = numpy.log10(df['ascos'])
-    
-    return (df)
+  d = {'node_name': my_nodes, 'degree': my_degrees, 'ascos': my_sims}
+  df = pd.DataFrame(d)
+  
+  df['ascos'] = normalize_rdd(df, 1, 1000, 'ascos')
+  df['ascos'] = numpy.log10(df['ascos'])
+  
+  return (df)
+
+def get_ascos_radius(G, u, r):
+  real_paths1 = nx.single_source_shortest_path(G, u, r)
+  g = G.subgraph(list(real_paths1.keys()))
+
+  nodes, sims = ascos(g)
+
+  my_nodes = []
+  my_degrees = []
+  my_sims = []
+  for n in nodes:
+      my_nodes.append(n)
+      my_degrees.append(G.degree(n))
+
+  i = list(nodes).index(u)
+  my_sims = sims[i]
+
+  d = {'node_name': my_nodes, 'degree': my_degrees, 'ascos': my_sims}
+  df = pd.DataFrame(d)
+  
+  df['ascos'] = normalize_rdd(df, 1, 1000, 'ascos')
+  df['ascos'] = numpy.log10(df['ascos'])
+  
+  return (df)
