@@ -87,37 +87,6 @@ def local_path_degree(network, node_list):
     return measures
 
 
-def triangles(network, node_list):
-    """
-
-    Args:
-        network: NetworkX Graph object
-        node_list: list of nodes for which we want the number of triangles
-
-    Returns:
-        measures: list of how many triangles each node is a part of
-
-    """
-    measures = []
-    largest_rad = -1
-    target_node = -1
-
-    for node in node_list:
-        # find largest radius
-        if node.radius >= largest_rad:
-            largest_rad = node.radius
-
-        if node.radius == 0:
-            target_node = node.name
-
-    local_graph = paths_to_graph(nx.single_source_shortest_path(network, target_node, largest_rad))
-
-    triangle_dic = nx.triangles(local_graph)
-    for node in node_list:
-        measures.append(triangle_dic[node.name])
-
-    return measures
-
 def global_graph_triangles(network, node_list):
     """Creates a list of degree of all nodes from main/global graph
 
@@ -164,6 +133,7 @@ def local_graph_triangles(network, node_list):
     
     return measures
 
+
 def local_path_triangles(network, node_list):
     """
 
@@ -193,6 +163,7 @@ def local_path_triangles(network, node_list):
         measures.append(triangle_dic[node.name])
 
     return measures
+
 
 def global_graph_clique(network, node_list):
     """Creates a list containing the number of cliques each node is apart of.
@@ -344,6 +315,7 @@ def local_path_katz_centrality(network, node_list):
         measures.append(katz_dic[node.name])
 
     return measures
+
 
 def global_graph_harmonic_centrality(network, node_list):
     """Creates a list of degree of all nodes from main/global graph

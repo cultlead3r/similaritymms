@@ -89,8 +89,8 @@ def get_cosine(G, u):
     df = pd.DataFrame(d)
     
     # df['cos_sim'] = (1-df['cos_sim'])
-    df['cos_sim'] = normalize_rdd(df, 1, 1000, 'cos_sim')
-    df['cos_sim'] = np.log(df['cos_sim'])
+    # df['cos_sim'] = normalize_rdd(df, 1, 1000, 'cos_sim')
+    # df['cos_sim'] = np.log(df['cos_sim'])
 
     return df
 

@@ -29,6 +29,7 @@ def visualize_rdd(g1, u, r, pos, m=measures.global_graph_degree):
     nodes_x = []
     nodes_y = []
 
+
     for p in pos.values():
         x, y = p[0], p[1]
         nodes_x.append(x)
@@ -70,10 +71,15 @@ def visualize_rdd_vector(g1, u, r, pos, measure_vector):
     nodes_x = []
     nodes_y = []
 
-    for p in pos.values():
-        x, y = p[0], p[1]
+    for node_name in g1.nodes:
+        x, y = pos[node_name][0], pos[node_name][1]
         nodes_x.append(x)
         nodes_y.append(y)
+
+    # for p in pos.values():
+    #     x, y = p[0], p[1]
+    #     nodes_x.append(x)
+    #     nodes_y.append(y)
 
     df['nodes_x'] = nodes_x
     df['nodes_y'] = nodes_y
@@ -103,7 +109,8 @@ def visualize_rdd_vector(g1, u, r, pos, measure_vector):
                              y=df['nodes_y'],
                              customdata=df[custom_data],
                              hovertemplate=hover_template,
-                             text=df['node_name'],
+                             text=list(g1.nodes),
+                             # text=['node_name'],
                              name="Node",
                              mode='markers+text'))
     fig.update_layout(template="plotly_dark", dragmode='pan', )
