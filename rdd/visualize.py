@@ -170,6 +170,19 @@ def add_markers(figure, nodes):
     return figure
 
 
+def add_markers_test(figure, pos, nodes):
+    annotations = [{'x': pos[n][0],
+                    'y': pos[n][1],
+                    'axref': 'x',
+                    'ayref': 'y',
+                    'arrowsize': 2,
+                    'arrowcolor': 'red',
+                    'showarrow': True,
+                    'arrowhead': 3} for n in nodes]
+    figure.update_layout(annotations=annotations)
+    return figure
+
+
 def visualize_simrank(g1, u, pos):
     """takes a graph and plots it, coloring vertices by RDD
 

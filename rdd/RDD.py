@@ -258,6 +258,7 @@ def get_rdds_for_visuals_vector(network, u, measure_vector, radius):
 
     # Populate and construct a DataFrame with basic node information
     for node in network:
+        print(node)
         node_list.append(node)
         degree_list.append(network.degree(node))
         # TODO: Broken
