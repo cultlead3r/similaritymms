@@ -119,9 +119,9 @@ def visualize_rdd_vector(g1, u, r, pos, measure_vector):
     return fig
 
 
-def draw(g1):
+def draw(g1, pos):
     """Draws a NetworkX Graph with Plotly."""
-    pos = nx.spring_layout(g1)
+    # pos = nx.spring_layout(g1)
     nodes_x = []
     nodes_y = []
 

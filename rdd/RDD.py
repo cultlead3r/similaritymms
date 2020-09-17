@@ -258,7 +258,6 @@ def get_rdds_for_visuals_vector(network, u, measure_vector, radius):
 
     # Populate and construct a DataFrame with basic node information
     for node in network:
-        print(node)
         node_list.append(node)
         degree_list.append(network.degree(node))
         # TODO: Broken
@@ -281,7 +280,7 @@ def get_rdds_for_visuals_vector(network, u, measure_vector, radius):
     # df[m.__name__] = np.log10(df[m.__name__])
     df_norm = df[list(map(lambda f: f.__name__, measure_vector))]
     df['normalized_rdd'] = la.norm(df_norm, axis=1)
-    df['normalized_rdd'] = normalize_rdd(df, 1, 1000, 'normalized_rdd')
+    #df['normalized_rdd'] = normalize_rdd(df, 1, 1000, 'normalized_rdd')
     # df['normalized_rdd'] = np.log10(df['normalized_rdd'])
     return df
 
