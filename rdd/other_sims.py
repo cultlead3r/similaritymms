@@ -4,6 +4,10 @@ import numpy as np
 from sklearn.cluster import KMeans
 from sklearn.cluster import MeanShift
 from rdd.measures import *
+from rdd import RDD
+import scipy.cluster.hierarchy as shc
+from sklearn.cluster import AgglomerativeClustering
+from sklearn_extra.cluster import KMedoids
 
 def simrank(G, u):
     sim = nx.simrank_similarity(G, u)
@@ -67,7 +71,7 @@ def k_means(df, measure_vector, k=3):
     for m in measure_vector:
         feats.append( m.__name__ )
 
-    y = kmeans.fit_predict(df[feats])
+    y = kmeans.fit_predict(df[['normalized_rdd']])
 
     df['k_mean_cluster'] = y
 
@@ -81,6 +85,34 @@ def k_means_other(df, target_columns, k=3):
     y = kmeans.fit_predict(df[feats])
 
     df['k_mean_cluster'] = y
+
+    return df
+
+def k_means_matrix_clustering(g, r, measure, num_cluster):
+    all_rdds_df = pd.DataFrame() 
+
+    for target_one in g:
+        rdd_list = []
+        for target_two in g:
+            rdd_list.append(RDD.realworld_distance_compare(g, target_one, target_two, measure[0], r))
+        all_rdds_df[target_one] = rdd_list
+    
+    data = all_rdds_df
+    np_of_rdds = np.array(data)
+    kmeans = KMeans(n_clusters=num_cluster)
+    cluster_data = kmeans.fit_predict(np_of_rdds)
+
+    node_list = []
+    degree_list = []
+    rad_list = []
+    # Populate and construct a DataFrame with basic node information
+    for node in g:
+        node_list.append(node)
+        degree_list.append(g.degree(node))
+        # TODO: Broken
+        rad_list.append(1)
+    
+    df = pd.DataFrame({'node_name': node_list, 'radius': rad_list, 'degree': degree_list, 'cluster': cluster_data})
 
     return df
 
@@ -106,3 +138,61 @@ def mean_shift_other(df, target_columns):
     df['mean_shift_cluster'] = y
 
     return df
+
+def agglomerative_hierarchical_clustering(g, r, measure, num_cluster):
+    all_rdds_df = pd.DataFrame() 
+
+    for target_one in g:
+        rdd_list = []
+        for target_two in g:
+            rdd_list.append(RDD.realworld_distance_compare(g, target_one, target_two, measure, r))
+        all_rdds_df[target_one] = rdd_list
+    
+    data = all_rdds_df
+    # dend = shc.dendrogram(shc.linkage(data, method='ward'))
+
+    cluster = AgglomerativeClustering(n_clusters=num_cluster, affinity='euclidean', linkage='ward')
+    cluster_data = cluster.fit_predict(data)
+
+    node_list = []
+    degree_list = []
+    rad_list = []
+    # Populate and construct a DataFrame with basic node information
+    for node in g:
+        node_list.append(node)
+        degree_list.append(g.degree(node))
+        # TODO: Broken
+        rad_list.append(1)
+    
+    df = pd.DataFrame({'node_name': node_list, 'radius': rad_list, 'degree': degree_list, 'cluster': cluster_data})
+
+    return df
+
+def kmedoid_clustering(g, r, measure, num_cluster):
+    all_rdds_df = pd.DataFrame() 
+
+    for target_one in g:
+        rdd_list = []
+        for target_two in g:
+            rdd_list.append(RDD.realworld_distance_compare(g, target_one, target_two, measure, r))
+        all_rdds_df[target_one] = rdd_list
+    
+    data = all_rdds_df
+    np_of_rdds = np.array(data)
+    kmedoids = KMedoids(n_clusters=num_cluster, random_state=0).fit(np_of_rdds)
+    cluster_data = kmedoids.labels_
+
+    node_list = []
+    degree_list = []
+    rad_list = []
+    # Populate and construct a DataFrame with basic node information
+    for node in g:
+        node_list.append(node)
+        degree_list.append(g.degree(node))
+        # TODO: Broken
+        rad_list.append(1)
+    
+    df = pd.DataFrame({'node_name': node_list, 'radius': rad_list, 'degree': degree_list, 'cluster': cluster_data})
+
+    return df
+
