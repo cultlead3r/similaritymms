@@ -399,7 +399,7 @@ def visualize_rdd_vector_kmeans(g1, u, r, measure_vector, pos, k=3, vistype=1):
                              hovertemplate=hover_template,
                              text=df['node_name'],
                              name="Node",
-                             mode='markers+text'))
+                             mode='markers'))
     fig.update_layout(template="plotly_dark", dragmode='pan',
                       annotations=[{'x': df.iloc[0]['nodes_x'],
                                     'y': df.iloc[0]['nodes_y'],
@@ -529,7 +529,7 @@ def visualize_rdd_vector_mean_shift(g1, u, r, measure_vector, pos, vistype=1):
                              hovertemplate=hover_template,
                              text=df['node_name'],
                              name="Node",
-                             mode='markers+text'))
+                             mode='markers'))
     fig.update_layout(template="plotly_dark", dragmode='pan',
                       annotations=[{'x': df.iloc[0]['nodes_x'],
                                     'y': df.iloc[0]['nodes_y'],
@@ -768,4 +768,196 @@ def visualize_rdd_vector_3D(g1, u, r, pos, measure_vectors, df_functions, df_sea
         fig.update_layout(template = "plotly_dark", dragmode='pan', )
     fig.update_traces(marker={'size': 10, 'color': color_vals, 'colorscale': 'Jet'})
     fig.write_html("graph.html", config={'scrollZoom': True})
+    return fig
+
+def visualize_rdd_kmeans_matrix(g1, r, measure, pos, num_clusters, vistype=1):
+    df = other_sims.k_means_matrix_clustering(g1, r, measure, num_clusters)
+
+    # pos = nx.spring_layout(g1)
+    nodes_x = []
+    nodes_y = []
+
+    for p in pos.values():
+        x, y = p[0], p[1]
+        nodes_x.append(x)
+        nodes_y.append(y)
+
+    df['nodes_x'] = nodes_x
+    df['nodes_y'] = nodes_y
+
+    edges_x = []
+    edges_y = []
+    for e in g1.edges():
+        x0, y0 = pos[e[0]]
+        x1, y1 = pos[e[1]]
+        edges_x.append(x0)
+        edges_x.append(x1)
+        edges_x.append(None)
+        edges_y.append(y0)
+        edges_y.append(y1)
+        edges_y.append(None)
+
+    # get the custom_data and build the hover template from the DataFrame column names
+    custom_data = df.columns
+    hover_template = ""
+    for i, m in enumerate(custom_data):
+        hover_template += "".join(m + ":" + ' %{customdata[' + str(i) + ']} <br> ')
+
+    fig = go.FigureWidget()
+    fig.add_trace(go.Scatter(x=edges_x, y=edges_y, name='edges', mode='lines', line={'width': 1}))
+    fig.add_trace(go.Scatter(x=df['nodes_x'],
+                             y=df['nodes_y'],
+                             customdata=df[custom_data],
+                             hovertemplate=hover_template,
+                             text=df['node_name'],
+                             name="Node",
+                             mode='markers'))
+    fig.update_layout(template="plotly_dark", dragmode='pan',
+                      annotations=[{'x': df.iloc[0]['nodes_x'],
+                                    'y': df.iloc[0]['nodes_y'],
+                                    'axref': 'x',
+                                    'ayref': 'y',
+                                    'arrowsize': 4,
+                                    'arrowcolor': 'red',
+                                    'showarrow': True,
+                                    'arrowhead': 3}])
+    if vistype == 0:
+        fig.update_traces(
+            marker={'size': ((df['cluster'] * 5) + 10), 'color': df['normalized_rdd'], 'colorscale': 'Jet'})
+    elif vistype == 1:
+        fig.update_traces(
+            marker={'size': 15, 'color': df['cluster'], 'colorscale': 'Jet'})
+    else:
+        print('enter proper vistype')
+
+    fig.write_html("graph.html", config={'scrollZoom': True})
+
+    return fig
+
+def visualize_rdd_agglomerative_hierarchical_clustering(g1, r, measure, pos, num_clusters, vistype=1):
+    df = other_sims.agglomerative_hierarchical_clustering(g1, r, measure, num_clusters)
+
+    # pos = nx.spring_layout(g1)
+    nodes_x = []
+    nodes_y = []
+
+    for p in pos.values():
+        x, y = p[0], p[1]
+        nodes_x.append(x)
+        nodes_y.append(y)
+
+    df['nodes_x'] = nodes_x
+    df['nodes_y'] = nodes_y
+
+    edges_x = []
+    edges_y = []
+    for e in g1.edges():
+        x0, y0 = pos[e[0]]
+        x1, y1 = pos[e[1]]
+        edges_x.append(x0)
+        edges_x.append(x1)
+        edges_x.append(None)
+        edges_y.append(y0)
+        edges_y.append(y1)
+        edges_y.append(None)
+
+    # get the custom_data and build the hover template from the DataFrame column names
+    custom_data = df.columns
+    hover_template = ""
+    for i, m in enumerate(custom_data):
+        hover_template += "".join(m + ":" + ' %{customdata[' + str(i) + ']} <br> ')
+
+    fig = go.FigureWidget()
+    fig.add_trace(go.Scatter(x=edges_x, y=edges_y, name='edges', mode='lines', line={'width': 1}))
+    fig.add_trace(go.Scatter(x=df['nodes_x'],
+                             y=df['nodes_y'],
+                             customdata=df[custom_data],
+                             hovertemplate=hover_template,
+                             text=df['node_name'],
+                             name="Node",
+                             mode='markers'))
+    fig.update_layout(template="plotly_dark", dragmode='pan',
+                      annotations=[{'x': df.iloc[0]['nodes_x'],
+                                    'y': df.iloc[0]['nodes_y'],
+                                    'axref': 'x',
+                                    'ayref': 'y',
+                                    'arrowsize': 4,
+                                    'arrowcolor': 'red',
+                                    'showarrow': True,
+                                    'arrowhead': 3}])
+    if vistype == 0:
+        fig.update_traces(
+            marker={'size': ((df['cluster'] * 5) + 10), 'color': df['normalized_rdd'], 'colorscale': 'Jet'})
+    elif vistype == 1:
+        fig.update_traces(
+            marker={'size': 15, 'color': df['cluster'], 'colorscale': 'Jet'})
+    else:
+        print('enter proper vistype')
+
+    fig.write_html("graph.html", config={'scrollZoom': True})
+
+    return fig
+
+def visualize_rdd_kmedoid(g1, r, measure, pos, num_clusters, vistype=1):
+    df = other_sims.kmedoid_clustering(g1, r, measure, num_clusters)
+
+    # pos = nx.spring_layout(g1)
+    nodes_x = []
+    nodes_y = []
+
+    for p in pos.values():
+        x, y = p[0], p[1]
+        nodes_x.append(x)
+        nodes_y.append(y)
+
+    df['nodes_x'] = nodes_x
+    df['nodes_y'] = nodes_y
+
+    edges_x = []
+    edges_y = []
+    for e in g1.edges():
+        x0, y0 = pos[e[0]]
+        x1, y1 = pos[e[1]]
+        edges_x.append(x0)
+        edges_x.append(x1)
+        edges_x.append(None)
+        edges_y.append(y0)
+        edges_y.append(y1)
+        edges_y.append(None)
+
+    # get the custom_data and build the hover template from the DataFrame column names
+    custom_data = df.columns
+    hover_template = ""
+    for i, m in enumerate(custom_data):
+        hover_template += "".join(m + ":" + ' %{customdata[' + str(i) + ']} <br> ')
+
+    fig = go.FigureWidget()
+    fig.add_trace(go.Scatter(x=edges_x, y=edges_y, name='edges', mode='lines', line={'width': 1}))
+    fig.add_trace(go.Scatter(x=df['nodes_x'],
+                             y=df['nodes_y'],
+                             customdata=df[custom_data],
+                             hovertemplate=hover_template,
+                             text=df['node_name'],
+                             name="Node",
+                             mode='markers'))
+    fig.update_layout(template="plotly_dark", dragmode='pan',
+                      annotations=[{'x': df.iloc[0]['nodes_x'],
+                                    'y': df.iloc[0]['nodes_y'],
+                                    'axref': 'x',
+                                    'ayref': 'y',
+                                    'arrowsize': 4,
+                                    'arrowcolor': 'red',
+                                    'showarrow': True,
+                                    'arrowhead': 3}])
+    if vistype == 0:
+        fig.update_traces(
+            marker={'size': ((df['cluster'] * 5) + 10), 'color': df['normalized_rdd'], 'colorscale': 'Jet'})
+    elif vistype == 1:
+        fig.update_traces(
+            marker={'size': 15, 'color': df['cluster'], 'colorscale': 'Jet'})
+    else:
+        print('enter proper vistype')
+
+    fig.write_html("graph.html", config={'scrollZoom': True})
+
     return fig
