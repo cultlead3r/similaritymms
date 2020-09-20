@@ -26,9 +26,9 @@ def simrank(G, u):
 
     # print(df)
 
-    df['simrank'] = normalize_rdd(df, 1, 1000, 'simrank')
+    # df['simrank'] = normalize_rdd(df, 1, 1000, 'simrank')
     
-    df['simrank'] = np.log10(df['simrank'])
+    # df['simrank'] = np.log10(df['simrank'])
     
     # print(df)
 
@@ -76,6 +76,23 @@ def k_means(df, measure_vector, k=3):
     df['k_mean_cluster'] = y
 
     return df
+
+
+def kmeans2(df, column, k):
+    """Runs KMeans on a given DataFrame / column
+
+    Args:
+        df (DataFrame): DataFrame with column containing measures to cluster on
+        column (str): Which column to use for clustering on
+        k (int): Number of clusters
+
+    Returns:
+        DataFrame: Returns the DataFrame with a "cluster" column added. Warning! Modifies the DF in place!
+    """
+    km = KMeans(n_clusters=k)
+    df['cluster'] = km.fit_predict(df[[column]])
+    return df
+
 
 def k_means_other(df, target_columns, k=3):
     kmeans = KMeans(n_clusters=k) 
@@ -196,3 +213,21 @@ def kmedoid_clustering(g, r, measure, num_cluster):
 
     return df
 
+    
+def kmedoid_clustering2(g, m, k):
+    """Get the clustering information for KMedoid clustering.
+
+    Args:
+        G (Graph): NetworkX Graph
+        M (DataFrame): a matrix of RDD values
+        k (int): number of clusters
+
+    Returns:
+        DataFrame: A DataFrame with node_name and cluster columns
+    """
+    # KMedoids requires a numpy array
+    np_of_values = np.array(m)
+    kmedoids = KMedoids(n_clusters=k, random_state=0).fit(np_of_values)
+    kmedoid_results = pd.DataFrame({'node_name': g.nodes(),
+                                    'cluster': kmedoids.labels_})
+    return kmedoid_results

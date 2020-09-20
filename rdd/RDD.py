@@ -3,15 +3,14 @@
 This module contains helper functions used in calculating
 Radial Distribution Distance (RDD) in networks.
 """
-
-
 from collections import defaultdict
-from rdd.Node import Node
 import networkx as nx
 import math
 import pandas as pd
 import numpy as np
 import numpy.linalg as la
+from rdd.Node import Node
+
 
 
 def populate_node_list(shortest_paths):
@@ -50,11 +49,11 @@ def add_measures(list_of_nodes, measures):
 
 def get_crd(list_of_nodes):
     """Calculate Cumulative Radial Distributions
-    
+
     Args:
     ------
         list_of_nodes : list of Node objects
-    
+
     Returns:
     --------
         m: a defaultdict radius->radial distribution
@@ -345,3 +344,24 @@ def get_rdds_for_visuals_diff_graph(network, u, measure, radius, network2):
     d = {'node_name': node_list, 'rdd': rdd_list, 'radius': rad_list}
     df = pd.DataFrame(d)
     return df
+
+
+def get_rdd_matrix(G, r, measure):
+    """Get a matrix of RDD values between all nodes.
+
+    Args:
+        G (Graph): NetworkX Graph
+        r (int): radius
+        measure (function): A measure function
+
+    Returns:
+        DataFrame: a matrix of RDD values between all nodes.
+    """
+    rdd_matrix = pd.DataFrame()
+    for target_one in G:
+        rdd_list = []
+        for target_two in G:
+            rdd_list.append(realworld_distance_compare(
+                G, target_one, target_two, measure, r))
+        rdd_matrix[target_one] = rdd_list
+    return rdd_matrix

@@ -1,12 +1,13 @@
 """Utility functions for RDD"""
 
+
 from scipy.stats import ks_2samp
 import numpy as np
-from rdd import realworld_distance_compare
 import pandas as pd
+from rdd.RDD import realworld_distance_compare
 
 
-def df_to_cluster_list(clustered_nodes):
+def df_to_cluster_list(df):
     """Takes a pandas Series and returns a list of partitioned nodes
 
     Args:
@@ -16,21 +17,19 @@ def df_to_cluster_list(clustered_nodes):
         list: List of lists: first list would be all nodes in partition 0, etc.
     """
     # sort the series by (cluster) value
-    clustered_nodes = clustered_nodes.sort_values()
-    # For the karate graph. It starts at node 1, not 0.
-    clustered_nodes.index += 1
-    # Assuming all clustering algorithms start with cluster 0
+    clustered_nodes = df.sort_values('cluster')
+    # Assuming clustering algorithms start with cluster 0
     cluster = 0
     partitioned_nodes = []
     cluster_list = []
-    for i, v in zip(clustered_nodes.index, clustered_nodes):
-        if v == cluster:
-            cluster_list.append(i)
+    for name, clust in zip(clustered_nodes.node_name, clustered_nodes.cluster):
+        if clust == cluster:
+            cluster_list.append(name)
         else:
-            cluster = v
+            cluster = clust
             partitioned_nodes.append(cluster_list)
             cluster_list = []
-            cluster_list.append(i)
+            cluster_list.append(name)
     # get the last partition
     partitioned_nodes.append(cluster_list)
     return partitioned_nodes
@@ -44,10 +43,10 @@ def get_histograms(dfs, bins):
         bins (int): Number of bins to make for histogram
 
     Returns:
-        (dict): A dictionary of histograms. 
+        (dict): A dictionary of histograms.
     """
     histos = {}
-    for i, d in enumerate(dfs):
+    for d in dfs:
         histos[d] = np.histogram(dfs[d]['normalized_rdd'], bins=bins)
     return histos
 
@@ -72,7 +71,6 @@ def ecdf(data):
     return x, y
 
 
-# TODO: account for target_G and what not
 def get_df_for_cluster(g, target_G, measure_list, target_rad):
     """Gets a Matrix of all RDD values to and from all nodes.
 
@@ -82,10 +80,14 @@ def get_df_for_cluster(g, target_G, measure_list, target_rad):
     Returns:
         DataFrame: A matrix of all RDD values to and from all nodes.
     """
-    all_rdds_df = pd.DataFrame() 
+    all_rdds_df = pd.DataFrame()
     for target_one in g.nodes():
         rdd_list = []
         for target_two in g.nodes():
-            rdd_list.append(realworld_distance_compare(target_G, target_one, target_two, measure_list, target_rad))
+            rdd_list.append(realworld_distance_compare(target_G,
+                                                       target_one,
+                                                       target_two,
+                                                       measure_list,
+                                                       target_rad))
         all_rdds_df[target_one] = rdd_list
     return all_rdds_df
