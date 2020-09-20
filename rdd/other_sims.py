@@ -125,7 +125,7 @@ def mean_shift(df, measure_vector):
 
     y = mean_shi.fit_predict(df[feats])
 
-    df['mean_shift_cluster'] = y
+    df['cluster'] = y
 
     return df
 
@@ -135,7 +135,7 @@ def mean_shift_other(df, target_columns):
     feats = target_columns
     y = mean_shi.fit_predict(df[feats])
 
-    df['mean_shift_cluster'] = y
+    df['cluster'] = y
 
     return df
 
