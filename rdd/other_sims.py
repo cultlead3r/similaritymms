@@ -73,10 +73,9 @@ def k_means(df, measure_vector, k=3):
 
     y = kmeans.fit_predict(df[['normalized_rdd']])
 
-    df['k_mean_cluster'] = y
+    df['cluster'] = y
 
     return df
-
 
 def kmeans2(df, column, k):
     """Runs KMeans on a given DataFrame / column
@@ -92,6 +91,25 @@ def kmeans2(df, column, k):
     km = KMeans(n_clusters=k)
     df['cluster'] = km.fit_predict(df[[column]])
     return df
+
+def k_means_matrix(g, m, k):
+    """Get the clustering information for kmeans clustering.
+
+    Args:
+        G (Graph): NetworkX Graph
+        M (DataFrame): a matrix of similarity values
+        k (int): number of clusters
+
+    Returns:
+        DataFrame: A DataFrame with node_name and cluster columns
+    """
+    np_of_values = np.array(m)
+    kmeans = KMeans(n_clusters=k)
+    cluster_data = kmeans.fit_predict(np_of_values)
+    
+    kmeans_results = pd.DataFrame({'node_name': g.nodes(),
+                                    'cluster': cluster_data})
+    return kmeans_results
 
 
 def k_means_other(df, target_columns, k=3):
@@ -219,7 +237,7 @@ def kmedoid_clustering2(g, m, k):
 
     Args:
         G (Graph): NetworkX Graph
-        M (DataFrame): a matrix of RDD values
+        M (DataFrame): a matrix of similarity values
         k (int): number of clusters
 
     Returns:

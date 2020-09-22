@@ -411,10 +411,10 @@ def visualize_rdd_vector_kmeans(g1, u, r, measure_vector, pos, k=3, vistype=1):
                                     'arrowhead': 3}])
     if vistype == 0:
         fig.update_traces(
-            marker={'size': ((df['k_mean_cluster'] * 5) + 10), 'color': df['normalized_rdd'], 'colorscale': 'Jet'})
+            marker={'size': ((df['cluster'] * 5) + 10), 'color': df['normalized_rdd'], 'colorscale': 'Jet'})
     elif vistype == 1:
         fig.update_traces(
-            marker={'size': 15, 'color': df['k_mean_cluster'], 'colorscale': 'Jet'})
+            marker={'size': 15, 'color': df['cluster'], 'colorscale': 'Jet'})
     else:
         print('enter proper vistype')
 
@@ -541,10 +541,10 @@ def visualize_rdd_vector_mean_shift(g1, u, r, measure_vector, pos, vistype=1):
                                     'arrowhead': 3}])
     if vistype == 0:
         fig.update_traces(
-            marker={'size': ((df['mean_shift_cluster'] * 5) + 10), 'color': df['normalized_rdd'], 'colorscale': 'Jet'})
+            marker={'size': ((df['cluster'] * 5) + 10), 'color': df['normalized_rdd'], 'colorscale': 'Jet'})
     elif vistype == 1:
         fig.update_traces(
-            marker={'size': 15, 'color': df['mean_shift_cluster'], 'colorscale': 'Jet'})
+            marker={'size': 15, 'color': df['cluster'], 'colorscale': 'Jet'})
     else:
         print('enter proper vistype')
 
