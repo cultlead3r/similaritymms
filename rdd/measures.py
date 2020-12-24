@@ -25,7 +25,7 @@ def global_graph_degree(network, node_list):
     measures = []
     for node in node_list:
         measures.append(network.degree[node.name])
-    
+
     return measures
 
 
@@ -50,7 +50,7 @@ def local_graph_degree(network, node_list):
 
     for node in node_list:
         measures.append(local_graph.degree[node.name])
-    
+
     return measures
 
 
@@ -68,22 +68,23 @@ def local_path_degree(network, node_list):
     measures = []
     largest_rad = -1
     target_node = -1
-    
+
     for node in node_list:
         # find largest radius
         if node.radius >= largest_rad:
             largest_rad = node.radius
-        
+
         if node.radius == 0:
             target_node = node.name
-    
-    local_graph = paths_to_graph(nx.single_source_shortest_path(network, target_node, largest_rad))
-    
+
+    local_graph = paths_to_graph(
+        nx.single_source_shortest_path(network, target_node, largest_rad))
+
     for node in node_list:
         # if local_graph.degree[node.name] > 1:
         # print(f'Name : {node.name} Degree: {local_graph.degree[node.name]}')
         measures.append(local_graph.degree[node.name])
-    
+
     return measures
 
 
@@ -104,8 +105,7 @@ def global_graph_triangles(network, node_list):
     triangle_dic = nx.triangles(network)
     for node in node_list:
         measures.append(triangle_dic[node.name])
-    
-    
+
     return measures
 
 
@@ -130,7 +130,7 @@ def local_graph_triangles(network, node_list):
     triangle_dic = nx.triangles(local_graph)
     for node in node_list:
         measures.append(triangle_dic[node.name])
-    
+
     return measures
 
 
@@ -157,7 +157,8 @@ def local_path_triangles(network, node_list):
         if node.radius == 0:
             target_node = node.name
 
-    local_graph = paths_to_graph(nx.single_source_shortest_path(network, target_node, largest_rad))
+    local_graph = paths_to_graph(
+        nx.single_source_shortest_path(network, target_node, largest_rad))
     triangle_dic = nx.triangles(local_graph)
     for node in node_list:
         measures.append(triangle_dic[node.name])
@@ -180,9 +181,10 @@ def global_graph_clique(network, node_list):
     """
     measures = []
     for node in node_list:
-        cliques = nx.algorithms.clique.cliques_containing_node(network, node.name)
+        cliques = nx.algorithms.clique.cliques_containing_node(
+            network, node.name)
         measures.append(len(cliques))
-    
+
     return measures
 
 
@@ -207,9 +209,10 @@ def local_graph_clique(network, node_list):
     local_graph = nodes_to_graph(network, list_of_nodes)
 
     for node in node_list:
-        cliques = nx.algorithms.clique.cliques_containing_node(local_graph, node.name)
+        cliques = nx.algorithms.clique.cliques_containing_node(
+            local_graph, node.name)
         measures.append(len(cliques))
-    
+
     return measures
 
 
@@ -217,22 +220,24 @@ def local_path_clique(network, node_list):
     measures = []
     largest_rad = -1
     target_node = -1
-    
+
     for node in node_list:
         if node.radius >= largest_rad:
             largest_rad = node.radius
-        
+
         if node.radius == 0:
             target_node = node.name
 
-    local_graph = paths_to_graph(nx.single_source_shortest_path(network, target_node, largest_rad))
+    local_graph = paths_to_graph(
+        nx.single_source_shortest_path(network, target_node, largest_rad))
 
     for node in node_list:
         # if local_graph.degree[node.name] > 1:
         # print(f'Name : {node.name} Degree: {local_graph.degree[node.name]}')
-        cliques = nx.algorithms.clique.cliques_containing_node(local_graph, node.name)
+        cliques = nx.algorithms.clique.cliques_containing_node(
+            local_graph, node.name)
         measures.append(len(cliques))
-    
+
     return measures
 
 
@@ -253,8 +258,7 @@ def global_graph_katz_centrality(network, node_list):
     katz_dic = nx.katz_centrality(network)
     for node in node_list:
         measures.append(katz_dic[node.name])
-    
-    
+
     return measures
 
 
@@ -281,7 +285,7 @@ def local_graph_katz_centrality(network, node_list):
     katz_dic = nx.katz_centrality(local_graph)
     for node in node_list:
         measures.append(katz_dic[node.name])
-    
+
     return measures
 
 
@@ -308,7 +312,8 @@ def local_path_katz_centrality(network, node_list):
         if node.radius == 0:
             target_node = node.name
 
-    local_graph = paths_to_graph(nx.single_source_shortest_path(network, target_node, largest_rad))
+    local_graph = paths_to_graph(
+        nx.single_source_shortest_path(network, target_node, largest_rad))
 
     katz_dic = nx.katz_centrality(local_graph)
     for node in node_list:
@@ -334,8 +339,7 @@ def global_graph_harmonic_centrality(network, node_list):
     harmonic_dic = nx.harmonic_centrality(network)
     for node in node_list:
         measures.append(harmonic_dic[node.name])
-    
-    
+
     return measures
 
 
@@ -362,7 +366,7 @@ def local_graph_harmonic_centrality(network, node_list):
     harmonic_dic = nx.harmonic_centrality(local_graph)
     for node in node_list:
         measures.append(harmonic_dic[node.name])
-    
+
     return measures
 
 
@@ -389,7 +393,8 @@ def local_path_harmonic_centrality(network, node_list):
         if node.radius == 0:
             target_node = node.name
 
-    local_graph = paths_to_graph(nx.single_source_shortest_path(network, target_node, largest_rad))
+    local_graph = paths_to_graph(
+        nx.single_source_shortest_path(network, target_node, largest_rad))
 
     harmonic_dic = nx.harmonic_centrality(local_graph)
     for node in node_list:
@@ -415,8 +420,7 @@ def global_graph_pagerank(network, node_list):
     pagerank_dic = nx.pagerank(network, max_iter=1000)
     for node in node_list:
         measures.append(pagerank_dic[node.name])
-    
-    
+
     return measures
 
 
@@ -443,10 +447,10 @@ def local_graph_pagerank(network, node_list):
     pagerank_dic = nx.pagerank(local_graph, max_iter=1000)
     for node in node_list:
         measures.append(pagerank_dic[node.name])
-    
+
     return measures
 
-    
+
 def local_path_pagerank(network, node_list):
     """
 
@@ -470,7 +474,8 @@ def local_path_pagerank(network, node_list):
         if node.radius == 0:
             target_node = node.name
 
-    local_graph = paths_to_graph(nx.single_source_shortest_path(network, target_node, largest_rad))
+    local_graph = paths_to_graph(
+        nx.single_source_shortest_path(network, target_node, largest_rad))
 
     pagerank_dic = nx.pagerank(local_graph, max_iter=1000)
     for node in node_list:
@@ -478,6 +483,44 @@ def local_path_pagerank(network, node_list):
 
     return measures
 
+
+def global_graph_morgan_index(target_network, node_list, target_iterations=15):
+    network = target_network.copy()
+    for iteration in range(target_iterations):
+        new_measures = []
+        for node in network:
+            if(iteration == 0):
+                network.nodes[node]['measure'] = 1
+            else:
+                neighbors = list(network.neighbors(node))
+                total_new_measure = 0
+
+                for neighbor in neighbors:
+                    total_new_measure = total_new_measure + \
+                        network.nodes[neighbor]['measure']
+
+                new_measures.append(total_new_measure)
+
+                # print(neighbors)
+
+        # print(new_measures)
+
+        if(iteration != 0):
+            count = 0
+            for node in network:
+                network.nodes[node]['measure'] = new_measures[count]
+                # print(network.nodes[node]['measure'])
+                count = count+1
+
+    # returning_measures = []
+    # for node in network:
+    #     returning_measures.append(network.nodes[node]['measure'])
+
+    returning_measures = []
+    for node in node_list:
+        returning_measures.append(network.nodes[node.name]['measure'])
+
+    return returning_measures
 
 # TODO: Implement
 
@@ -497,7 +540,5 @@ def local_path_pagerank(network, node_list):
 #         Note Working RN
 #         cycles = nx.find_cycle(network, node.name)
 #         measures.append(len(cycles))
-    
+
 #     return measures
-
-
