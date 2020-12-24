@@ -364,4 +364,5 @@ def get_rdd_matrix(G, r, measure):
             rdd_list.append(realworld_distance_compare(
                 G, target_one, target_two, measure, r))
         rdd_matrix[target_one] = rdd_list
+    rdd_matrix.index += 1
     return rdd_matrix

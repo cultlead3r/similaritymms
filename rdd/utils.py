@@ -71,6 +71,7 @@ def ecdf(data):
     return x, y
 
 
+# TODO: Is this broken? Use get_rdd_matrix from RDD instead
 def get_df_for_cluster(g, target_G, measure_list, target_rad):
     """Gets a Matrix of all RDD values to and from all nodes.
 

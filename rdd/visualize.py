@@ -812,15 +812,17 @@ def visualize_rdd_kmeans_matrix(g1, r, measure, pos, num_clusters, vistype=1):
                              text=df['node_name'],
                              name="Node",
                              mode='markers'))
-    fig.update_layout(template="plotly_dark", dragmode='pan',
-                      annotations=[{'x': df.iloc[0]['nodes_x'],
-                                    'y': df.iloc[0]['nodes_y'],
-                                    'axref': 'x',
-                                    'ayref': 'y',
-                                    'arrowsize': 4,
-                                    'arrowcolor': 'red',
-                                    'showarrow': True,
-                                    'arrowhead': 3}])
+    fig.update_layout(template="plotly_dark", dragmode='pan',)
+                    #   annotations=[{'x': df.iloc[0]['nodes_x'],
+                    #                 'y': df.iloc[0]['nodes_y'],
+                    #                 'axref': 'x',
+                    #                 'ayref': 'y',
+                    #                 'arrowsize': 4,
+                    #                 'arrowcolor': 'red',
+                    #                 'showarrow': True,
+                    #                 'arrowhead': 3}])
+
+
     if vistype == 0:
         fig.update_traces(
             marker={'size': ((df['cluster'] * 5) + 10), 'color': df['normalized_rdd'], 'colorscale': 'Jet'})
@@ -876,15 +878,15 @@ def visualize_rdd_agglomerative_hierarchical_clustering(g1, r, measure, pos, num
                              text=df['node_name'],
                              name="Node",
                              mode='markers'))
-    fig.update_layout(template="plotly_dark", dragmode='pan',
-                      annotations=[{'x': df.iloc[0]['nodes_x'],
-                                    'y': df.iloc[0]['nodes_y'],
-                                    'axref': 'x',
-                                    'ayref': 'y',
-                                    'arrowsize': 4,
-                                    'arrowcolor': 'red',
-                                    'showarrow': True,
-                                    'arrowhead': 3}])
+    fig.update_layout(template="plotly_dark", dragmode='pan',)
+                    #   annotations=[{'x': df.iloc[0]['nodes_x'],
+                    #                 'y': df.iloc[0]['nodes_y'],
+                    #                 'axref': 'x',
+                    #                 'ayref': 'y',
+                    #                 'arrowsize': 4,
+                    #                 'arrowcolor': 'red',
+                    #                 'showarrow': True,
+                    #                 'arrowhead': 3}])
     if vistype == 0:
         fig.update_traces(
             marker={'size': ((df['cluster'] * 5) + 10), 'color': df['normalized_rdd'], 'colorscale': 'Jet'})
@@ -940,15 +942,15 @@ def visualize_rdd_kmedoid(g1, r, measure, pos, num_clusters, vistype=1):
                              text=df['node_name'],
                              name="Node",
                              mode='markers'))
-    fig.update_layout(template="plotly_dark", dragmode='pan',
-                      annotations=[{'x': df.iloc[0]['nodes_x'],
-                                    'y': df.iloc[0]['nodes_y'],
-                                    'axref': 'x',
-                                    'ayref': 'y',
-                                    'arrowsize': 4,
-                                    'arrowcolor': 'red',
-                                    'showarrow': True,
-                                    'arrowhead': 3}])
+    fig.update_layout(template="plotly_dark", dragmode='pan',)
+                    #   annotations=[{'x': df.iloc[0]['nodes_x'],
+                    #                 'y': df.iloc[0]['nodes_y'],
+                    #                 'axref': 'x',
+                    #                 'ayref': 'y',
+                    #                 'arrowsize': 4,
+                    #                 'arrowcolor': 'red',
+                    #                 'showarrow': True,
+                    #                 'arrowhead': 3}])
     if vistype == 0:
         fig.update_traces(
             marker={'size': ((df['cluster'] * 5) + 10), 'color': df['normalized_rdd'], 'colorscale': 'Jet'})
