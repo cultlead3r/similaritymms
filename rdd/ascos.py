@@ -158,3 +158,11 @@ def get_ascos_radius(G, u, r):
   df['ascos'] = numpy.log10(df['ascos'])
   
   return (df)
+
+
+def get_ascos_matrix(G):
+    nodes, sims = ascos(G)
+
+    df = pd.DataFrame.from_records(sims)
+
+    return df

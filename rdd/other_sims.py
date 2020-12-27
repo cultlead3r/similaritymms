@@ -64,6 +64,13 @@ def simrank_radius(G, u, r):
     return df
 
 
+def get_simrank_matrix(G):
+    sim = nx.simrank_similarity(G)
+    matrix = pd.DataFrame.from_dict(sim)
+    return matrix
+
+
+
 def k_means(df, measure_vector, k=3):
     kmeans = KMeans(n_clusters=k) 
     
