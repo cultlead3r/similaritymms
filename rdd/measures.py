@@ -484,7 +484,7 @@ def local_path_pagerank(network, node_list):
     return measures
 
 
-def global_graph_morgan_index(target_network, node_list, target_iterations=15):
+def global_graph_morgan_index(target_network, node_list, target_iterations=8):
     network = target_network.copy()
     for iteration in range(target_iterations):
         new_measures = []
